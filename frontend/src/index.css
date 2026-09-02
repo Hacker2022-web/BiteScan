@@ -1,0 +1,94 @@
+@import "tailwindcss";
+
+@theme {
+  --color-oatmeal: #F7F4EE;
+  --color-oatmeal-light: #FCFBF9;
+  --color-oatmeal-dark: #E5DDCF;
+  --color-terracotta: #C86428;
+  --color-terracotta-hover: #B2551F;
+  --color-forest: #5B7038;
+  --color-forest-soft: #EBF0DE;
+  --color-crimson: #DC2626;
+  --color-crimson-soft: #FEE2E2;
+  --color-amber: #D97706;
+  --color-amber-soft: #FEF3C7;
+  --color-walnut: #24201E;
+  --color-slate: #78716C;
+  --color-slate-light: #A8A29E;
+
+  --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  --font-serif: 'Playfair Display', Georgia, serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--color-oatmeal);
+  color: var(--color-walnut);
+  margin: 0;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Card Elevation & Shadows */
+.card-warm {
+  background: #FFFFFF;
+  border: 1px solid var(--color-oatmeal-dark);
+  box-shadow: 0 4px 20px -2px rgba(36, 32, 30, 0.05), 0 2px 6px -1px rgba(36, 32, 30, 0.03);
+  border-radius: 1.5rem;
+}
+
+.card-interactive {
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.card-interactive:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px -3px rgba(200, 100, 40, 0.08), 0 4px 10px -2px rgba(36, 32, 30, 0.04);
+  border-color: rgba(200, 100, 40, 0.3);
+}
+
+/* Animated Scanner Laser */
+.scanline {
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    rgba(200, 100, 40, 0.05) 30%,
+    rgba(200, 100, 40, 0.3) 50%,
+    rgba(200, 100, 40, 0.8) 52%,
+    rgba(200, 100, 40, 0.3) 54%,
+    rgba(200, 100, 40, 0.05) 70%,
+    transparent 100%
+  );
+  box-shadow: 0 0 15px rgba(200, 100, 40, 0.6);
+  animation: scanline 2.2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+@keyframes scanline {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(100%); }
+}
+
+/* Gauge Fill */
+@keyframes gauge-fill {
+  from { stroke-dashoffset: 283; }
+}
+
+.animate-gauge {
+  animation: gauge-fill 1.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+/* Smooth Fade and Slide */
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade {
+  animation: fade-in 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Button Tap Feedback */
+button:active {
+  transform: scale(0.97);
+}

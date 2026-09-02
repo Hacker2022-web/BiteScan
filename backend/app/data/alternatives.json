@@ -1,0 +1,110 @@
+{
+  "palm_oil_alternatives": [
+    {
+      "original_product": "Maggi 2-Minute Noodles 70g",
+      "original_brand": "Nestle",
+      "original_ingredients": ["Palm Oil", "Maida (Refined Wheat Flour)", "Salt", "Sugar", "Spices", "MSG"],
+      "alternatives": [
+        {
+          "product": "Yippee! Noodles 70g",
+          "brand": "ITC",
+          "key_benefits": ["No Palm Oil", "Uses Sunflower Oil", "No MSG Added", "No Artificial Colors"],
+          "health_score": 7.2,
+          "price_range": "₹12-14"
+        },
+        {
+          "product": "Millet Noodles 80g",
+          "brand": "Slurrp Farm",
+          "key_benefits": ["100% Millet", "No Palm Oil", "No Maida", "No MSG", "No Artificial Preservatives"],
+          "health_score": 8.8,
+          "price_range": "₹45-55"
+        }
+      ]
+    },
+    {
+      "original_product": "Parle-G Biscuits 80g",
+      "original_brand": "Parle",
+      "original_ingredients": ["Wheat Flour", "Sugar", "Palm Oil", "Glucose Syrup", "Leavening Agents", "Salt"],
+      "alternatives": [
+        {
+          "product": "Anmol Cookies 75g",
+          "brand": "Anmol",
+          "key_benefits": ["No Palm Oil", "Uses Butter", "No Preservatives", "No Trans Fat"],
+          "health_score": 6.8,
+          "price_range": "₹10-12"
+        },
+        {
+          "product": "Whole Wheat Rusk 100g",
+          "brand": "Britannia",
+          "key_benefits": ["100% Whole Wheat", "No Palm Oil", "High Fiber", "No Artificial Flavors"],
+          "health_score": 7.5,
+          "price_range": "₹30-35"
+        }
+      ]
+    }
+  ],
+  "sugar_alternatives": [
+    {
+      "original_product": "Coca-Cola 500ml",
+      "original_brand": "Coca-Cola",
+      "original_ingredients": ["Carbonated Water", "Sugar (10.6g per 100ml)", "Caramel Color", "Phosphoric Acid", "Caffeine", "Natural Flavors"],
+      "alternatives": [
+        {
+          "product": "Paper Boat Aam Panna 200ml",
+          "brand": "Paper Boat",
+          "key_benefits": ["No Added Sugar", "Real Mango", "No Artificial Colors", "Natural Flavors Only"],
+          "health_score": 7.8,
+          "price_range": "₹30-35"
+        },
+        {
+          "product": "Nimbu Masala Soda 300ml",
+          "brand": "Raw Pressery",
+          "key_benefits": ["Zero Sugar", "Zero Preservatives", "Real Lemon", "No Artificial Sweeteners"],
+          "health_score": 8.5,
+          "price_range": "₹45-60"
+        }
+      ]
+    },
+    {
+      "original_product": "Frooti Mango Drink 200ml",
+      "original_brand": "Parle Agro",
+      "original_ingredients": ["Water", "Sugar", "Mango Pulp (5%)", "Citric Acid", "Natural Flavors", "Preservatives"],
+      "alternatives": [
+        {
+          "product": "Raw Pressery Mango Juice 200ml",
+          "brand": "Raw Pressery",
+          "key_benefits": ["No Added Sugar", "No Preservatives", "Cold-Pressed", "100% Natural Mango"],
+          "health_score": 8.2,
+          "price_range": "₹60-75"
+        },
+        {
+          "product": "Tropicana Slice 200ml",
+          "brand": "PepsiCo",
+          "key_benefits": ["100% Real Fruit", "No Artificial Colors", "Enriched with Vitamin C"],
+          "health_score": 6.5,
+          "price_range": "₹20-25"
+        }
+      ]
+    }
+  ],
+  "clean_label_general": [
+    {
+      "category": "Cooking Oil",
+      "avoid": ["Palm Oil", "Hydrogenated Oil", "Vanaspati"],
+      "choose": ["Cold-Pressed Mustard Oil", "Extra Virgin Olive Oil", "Coconut Oil (Cold-Pressed)", "Groundnut Oil"],
+      "health_score_range": [8.0, 10.0]
+    },
+    {
+      "category": "Instant Noodles",
+      "avoid": ["Maida", "Palm Oil", "MSG", "Tertiary Butylhydroquinone (TBHQ)"],
+      "choose": ["Whole Wheat Noodles", "Millet Noodles", "Buckwheat Noodles"],
+      "health_score_range": [7.0, 9.5]
+    },
+    {
+      "category": "Soft Drinks",
+      "avoid": ["High Fructose Corn Syrup", "Artificial Colors", "Phosphoric Acid", "Caffeine"],
+      "choose": ["Coconut Water", "Buttermilk (Chaas)", "Nimbu Pani", "Jaljeera"],
+      "health_score_range": [8.5, 10.0]
+    }
+  ]
+}

@@ -1,0 +1,72 @@
+{
+  "rule_7": {
+    "description": "Legal Metrology (Packaged Commodities) Rules, 2011 — Rule 7: Minimum height of numerals",
+    "schedule_ii": {
+      "brackets": [
+        {
+          "net_quantity_min_g": 0,
+          "net_quantity_max_g": 100,
+          "min_height_mm": 1.0,
+          "description": "Net quantity up to 100g: minimum numeral height 1mm"
+        },
+        {
+          "net_quantity_min_g": 101,
+          "net_quantity_max_g": 200,
+          "min_height_mm": 1.5,
+          "description": "Net quantity 101g–200g: minimum numeral height 1.5mm"
+        },
+        {
+          "net_quantity_min_g": 201,
+          "net_quantity_max_g": 500,
+          "min_height_mm": 2.0,
+          "description": "Net quantity 201g–500g: minimum numeral height 2mm"
+        },
+        {
+          "net_quantity_min_g": 501,
+          "net_quantity_max_g": 1000,
+          "min_height_mm": 3.0,
+          "description": "Net quantity 501g–1kg: minimum numeral height 3mm"
+        },
+        {
+          "net_quantity_min_g": 1001,
+          "net_quantity_max_g": 5000,
+          "min_height_mm": 4.0,
+          "description": "Net quantity 1.01kg–5kg: minimum numeral height 4mm"
+        },
+        {
+          "net_quantity_min_g": 5001,
+          "net_quantity_max_g": 10000,
+          "min_height_mm": 5.0,
+          "description": "Net quantity 5.01kg–10kg: minimum numeral height 5mm"
+        },
+        {
+          "net_quantity_min_g": 10001,
+          "net_quantity_max_g": 25000,
+          "min_height_mm": 6.0,
+          "description": "Net quantity 10.01kg–25kg: minimum numeral height 6mm"
+        }
+      ]
+    }
+  },
+  "barcode_specs": {
+    "ean13": {
+      "total_width_mm": 37.29,
+      "total_height_mm": 25.91,
+      "quiet_zone_left_mm": 11,
+      "quiet_zone_right_mm": 7,
+      "bar_height_mm": 22.85,
+      "description": "Standard EAN-13 barcode dimensions for PPM calibration"
+    }
+  },
+  "mandatory Declarations": [
+    "Name and address of manufacturer",
+    "Common name of the commodity",
+    "Net quantity in SI units",
+    "Maximum Retail Price (MRP) inclusive of all taxes",
+    "Date of packaging / manufacturing",
+    " Best before / Use by date",
+    "Country of origin for imported goods",
+    "Lot/batch number",
+    "Manufacturer's customer care details"
+  ]
+}

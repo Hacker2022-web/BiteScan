@@ -1,0 +1,130 @@
+{
+  "banned": [
+    {
+      "code": "E102",
+      "name": "Tartrazine",
+      "cas_number": "1934-21-0",
+      "category": "Synthetic Dye",
+      "risk": "high",
+      "fssai_status": "banned in several categories",
+      "effects": "Hyperactivity in children, allergic reactions, azo dye sensitivity",
+      "common_in": ["soft drinks", "candies", "chips", "instant noodles"]
+    },
+    {
+      "code": "E110",
+      "name": "Sunset Yellow FCF",
+      "cas_number": "2783-94-0",
+      "category": "Synthetic Dye",
+      "risk": "high",
+      "fssai_status": "restricted — requires declaration",
+      "effects": "Allergic reactions, hyperactivity, potential carcinogen",
+      "common_in": ["packaged snacks", "sauces", "ice cream"]
+    },
+    {
+      "code": "E129",
+      "name": "Allura Red AC",
+      "cas_number": "25956-17-6",
+      "category": "Synthetic Dye",
+      "risk": "high",
+      "fssai_status": "restricted — banned in some food categories",
+      "effects": "Hyperactivity, allergic reactions in aspirin-sensitive individuals",
+      "common_in": ["candies", "soft drinks", "gelatin desserts"]
+    },
+    {
+      "code": "E171",
+      "name": "Titanium Dioxide",
+      "cas_number": "13463-67-7",
+      "category": "Coloring Agent",
+      "risk": "high",
+      "fssai_status": "banned w.e.f. August 2022",
+      "effects": "Genotoxicity concerns, potential DNA damage, gut microbiome disruption",
+      "common_in": ["chewing gum", "white sauces", "candies", "toothpaste"]
+    },
+    {
+      "code": "E320",
+      "name": "Butylated Hydroxyanisole (BHA)",
+      "cas_number": "25013-16-5",
+      "category": "Antioxidant Preservative",
+      "risk": "high",
+      "fssai_status": "restricted — IARC Group 2B possible carcinogen",
+      "effects": "Endocrine disruption, potential carcinogenicity, liver damage",
+      "common_in": ["potato chips", "instant noodles", "chewing gum", "cereals"]
+    },
+    {
+      "code": "E321",
+      "name": "Butylated Hydroxytoluene (BHT)",
+      "cas_number": "128-37-0",
+      "category": "Antioxidant Preservative",
+      "risk": "medium",
+      "fssai_status": "restricted — within prescribed limits only",
+      "effects": "Endocrine disruption, potential carcinogen at high doses",
+      "common_in": ["oils", "cereals", "snack foods", "packaged foods"]
+    }
+  ],
+  "restricted": [
+    {
+      "code": "E621",
+      "name": "Monosodium Glutamate (MSG)",
+      "cas_number": "621-72-7",
+      "category": "Flavor Enhancer",
+      "risk": "medium",
+      "fssai_status": "permitted with mandatory declaration",
+      "effects": "Chinese Restaurant Syndrome (headache, flushing), excitotoxin concerns",
+      "common_in": ["instant noodles", "soups", "chips", "Chinese cuisine", "seasonings"]
+    },
+    {
+      "code": "E950",
+      "name": "Acesulfame Potassium",
+      "cas_number": "55673-45-7",
+      "category": "Artificial Sweetener",
+      "risk": "low",
+      "fssai_status": "permitted within limits — mandatory declaration",
+      "effects": "Potential gut microbiome disruption, contains methylene chloride (potential carcinogen)",
+      "common_in": ["diet sodas", "sugar-free products", "chewing gum"]
+    },
+    {
+      "code": "E951",
+      "name": "Aspartame",
+      "cas_number": "22839-47-0",
+      "category": "Artificial Sweetener",
+      "risk": "medium",
+      "fssai_status": "permitted — IARC Group 2B (possibly carcinogenic)",
+      "effects": "Phenylalanine risk for PKU patients, headaches, dizziness",
+      "common_in": ["diet beverages", "sugar-free gum", "tabletop sweeteners"]
+    },
+    {
+      "code": "E952",
+      "name": "Cyclamate",
+      "cas_number": "139-05-9",
+      "category": "Artificial Sweetener",
+      "risk": "medium",
+      "fssai_status": "restricted — banned in some countries",
+      "effects": "Potential bladder carcinogenicity at high doses, reproductive toxicity",
+      "common_in": ["diet soft drinks", "tabletop sweeteners"]
+    },
+    {
+      "code": "E131",
+      "name": "Patent Blue V",
+      "cas_number": "3560-59-0",
+      "category": "Synthetic Dye",
+      "risk": "medium",
+      "fssai_status": "restricted — banned in some food categories",
+      "effects": "Allergic reactions, hyperactivity, anaphylaxis in rare cases",
+      "common_in": ["confectionery", "ice cream", "desserts"]
+    }
+  ],
+  "high_risk_additives": [
+    "E102", "E110", "E129", "E171", "E320", "E321"
+  ],
+  "moderate_risk_additives": [
+    "E621", "E950", "E951", "E952", "E131"
+  ],
+  "harmful_ingredients_keywords": [
+    "palm oil", "palmolein", "hydrogenated vegetable oil", "vanaspati",
+    "partially hydrogenated", "trans fat", "high fructose corn syrup",
+    "msg", "monosodium glutamate", "disodium inosinate", "disodium guanylate",
+    "sodium nitrite", "sodium nitrate", "potassium bromate",
+    "azodicarbonamide", "propylparaben", "butylparaben",
+    "red 40", "yellow 5", "yellow 6", "blue 1", "blue 2"
+  ]
+}

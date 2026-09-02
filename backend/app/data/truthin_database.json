@@ -1,0 +1,543 @@
+{
+  "products": [
+    {
+      "id": "maggi_masala",
+      "name": "Maggi 2-Minute Masala Noodles (70g)",
+      "brand": "Nestle India",
+      "category": "instant_foods",
+      "category_label": "Instant Noodles & Pasta",
+      "health_score": 5.5,
+      "health_status": "Caution: High Palm Oil & Sodium",
+      "score_label": "Moderate",
+      "mrp": "₹14.00",
+      "barcode": "8901058002479",
+      "image_url": "https://images.unsplash.com/photo-1612927601601-6638404737ce?w=400&auto=format&fit=crop&q=80",
+      "key_ingredients": [
+        "Refined Wheat Flour (Maida) 44.9%",
+        "Palm Oil 19.5%",
+        "MSG (E621)",
+        "Caramel IV (E150d)",
+        "Hydrolysed Peanut Protein"
+      ],
+      "alarms": [
+        {
+          "type": "palm_oil",
+          "title": "Contains Palm Oil (19.5%)",
+          "message": "High in atherogenic saturated fats. Flash-fried noodle cake."
+        },
+        {
+          "type": "restricted_additive",
+          "title": "Contains MSG (E621)",
+          "message": "Monosodium Glutamate flavor enhancer in tastemaker."
+        }
+      ],
+      "clean_alternatives": [
+        {
+          "product_name": "The Whole Truth Whole Wheat Instant Noodles",
+          "brand": "The Whole Truth Foods",
+          "health_score": 9.2,
+          "price": "₹75 (Pack of 2)",
+          "key_differentiators": [
+            "0% Palm Oil (Cold-pressed oil used)",
+            "100% Whole Wheat Grain (0% Maida)",
+            "No added MSG or chemical colors"
+          ]
+        },
+        {
+          "product_name": "Slurrp Farm Foxtail Millet Noodles",
+          "brand": "Slurrp Farm",
+          "health_score": 8.8,
+          "price": "₹60",
+          "key_differentiators": [
+            "Air-baked, never flash-fried",
+            "Made of Ragi & Foxtail Millets",
+            "Zero synthetic preservatives"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "bournvita_health",
+      "name": "Cadbury Bournvita Chocolate Health Drink (500g)",
+      "brand": "Mondelez India",
+      "category": "breakfast_spreads",
+      "category_label": "Breakfast & Spreads",
+      "health_score": 3.4,
+      "health_status": "50% Sugar Disguised as Health Drink",
+      "score_label": "Harmful",
+      "mrp": "₹245.00",
+      "barcode": "8901233011021",
+      "image_url": "https://images.unsplash.com/photo-1544787219-7f47ccb76574?w=400&auto=format&fit=crop&q=80",
+      "key_ingredients": [
+        "Cereal Extract (51%)",
+        "Sugar (49.8g per 100g)",
+        "Cocoa Solids",
+        "Caramel Color (E150c)",
+        "Liquid Glucose",
+        "Emulsifiers"
+      ],
+      "alarms": [
+        {
+          "type": "excessive_sugar",
+          "title": "Almost 50% Pure Sugar",
+          "message": "2 spoons contain 15g sugar, exceeding 60% of child daily sugar allowance."
+        },
+        {
+          "type": "restricted_additive",
+          "title": "Caramel Color (E150c)",
+          "message": "Class III chemical coloring agent."
+        }
+      ],
+      "clean_alternatives": [
+        {
+          "product_name": "Early Foods Organic Ragi Cocoa Drink Mix",
+          "brand": "Early Foods",
+          "health_score": 9.5,
+          "price": "₹280",
+          "key_differentiators": [
+            "0g Added White Refined Sugar (Dates & Jaggery)",
+            "Sprouted Millets & Almonds",
+            "100% Natural Cocoa (No E150c)"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "parle_g",
+      "name": "Parle-G Glucose Biscuits (80g)",
+      "brand": "Parle Products",
+      "category": "biscuits_cookies",
+      "category_label": "Biscuits & Cookies",
+      "health_score": 4.8,
+      "health_status": "High Sugar & Palm Oil",
+      "score_label": "Poor",
+      "mrp": "₹10.00",
+      "barcode": "8901719101015",
+      "image_url": "https://images.unsplash.com/photo-1558961363-fa8fdf82db35?w=400&auto=format&fit=crop&q=80",
+      "key_ingredients": [
+        "Refined Wheat Flour (Maida)",
+        "Sugar (25.5g per 100g)",
+        "Refined Palm Oil",
+        "Invert Sugar Syrup",
+        "Leavening Agents (E503ii, E500ii)"
+      ],
+      "alarms": [
+        {
+          "type": "excessive_sugar",
+          "title": "25.5% Added Sugar",
+          "message": "Sugar is the 2nd ingredient by weight."
+        },
+        {
+          "type": "palm_oil",
+          "title": "Refined Palm Oil Base",
+          "message": "Uses hydrogenated vegetable fat."
+        }
+      ],
+      "clean_alternatives": [
+        {
+          "product_name": "Early Foods Organic Ragi & Almond Cookies",
+          "brand": "Early Foods",
+          "health_score": 9.4,
+          "price": "₹150",
+          "key_differentiators": [
+            "100% Organic Ragi (0% Maida)",
+            "Sweetened with Organic Jaggery",
+            "Pure Cow Butter (0% Palm Oil)"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "oreo_chocolate",
+      "name": "Cadbury Oreo Vanilla Creme Biscuits (120g)",
+      "brand": "Mondelez India",
+      "category": "biscuits_cookies",
+      "category_label": "Biscuits & Cookies",
+      "health_score": 3.8,
+      "health_status": "Extreme Sugar & Vegetable Fat",
+      "score_label": "Harmful",
+      "mrp": "₹35.00",
+      "barcode": "8901233024823",
+      "image_url": "https://images.unsplash.com/photo-1563729784474-d77dbb933a9e?w=400&auto=format&fit=crop&q=80",
+      "key_ingredients": [
+        "Refined Wheat Flour",
+        "Sugar (38g/100g)",
+        "Fractionated Palm Oil",
+        "Invert Sugar",
+        "Cocoa Solids",
+        "Emulsifier (E322)"
+      ],
+      "alarms": [
+        {
+          "type": "excessive_sugar",
+          "title": "38% Sugar Content",
+          "message": "Over 1/3rd of the biscuit weight is pure sugar."
+        },
+        {
+          "type": "palm_oil",
+          "title": "Fractionated Palm Oil",
+          "message": "Creme filling uses industrial saturated fats."
+        }
+      ],
+      "clean_alternatives": [
+        {
+          "product_name": "The Whole Truth Dark Chocolate Cookies",
+          "brand": "The Whole Truth Foods",
+          "health_score": 9.1,
+          "price": "₹120",
+          "key_differentiators": [
+            "Zero Refined Sugar (Date sweetened)",
+            "0% Palm Oil (Pure Butter)",
+            "Real Single-Origin Cocoa"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "coca_cola_500",
+      "name": "Coca-Cola Original Soft Drink (500ml)",
+      "brand": "Coca-Cola India",
+      "category": "beverages_juices",
+      "category_label": "Cold Drinks & Juices",
+      "health_score": 4.0,
+      "health_status": "Extreme Added Sugar (53g Sugar)",
+      "score_label": "Poor",
+      "mrp": "₹40.00",
+      "barcode": "8901764021221",
+      "image_url": "https://images.unsplash.com/photo-1622483767028-3f66f32aef97?w=400&auto=format&fit=crop&q=80",
+      "key_ingredients": [
+        "Carbonated Water",
+        "Sugar (10.6g per 100ml)",
+        "Acidity Regulator (E338)",
+        "Caramel IV (E150d)",
+        "Caffeine"
+      ],
+      "alarms": [
+        {
+          "type": "excessive_sugar",
+          "title": "53 Grams Sugar / Bottle",
+          "message": "Exceeds 100% of WHO daily recommended sugar limit in one bottle."
+        },
+        {
+          "type": "restricted_additive",
+          "title": "Orthophosphoric Acid (E338)",
+          "message": "Acidity regulator associated with reduced bone mineral density."
+        }
+      ],
+      "clean_alternatives": [
+        {
+          "product_name": "Raw Pressery Cold-Pressed Kombucha Cola",
+          "brand": "Raw Pressery",
+          "health_score": 8.5,
+          "price": "₹99",
+          "key_differentiators": [
+            "Naturally fermented organic tea base",
+            "70% less sugar than mainstream colas",
+            "Zero synthetic phosphoric acid"
+          ]
+        },
+        {
+          "product_name": "Paper Boat Sparkling Ginger Lemon",
+          "brand": "Paper Boat",
+          "health_score": 8.1,
+          "price": "₹40",
+          "key_differentiators": [
+            "Real ginger and lemon juice",
+            "Zero artificial chemical colors",
+            "No synthetic caffeine"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "sting_energy",
+      "name": "Sting Blue Current Energy Drink (250ml)",
+      "brand": "PepsiCo India",
+      "category": "beverages_juices",
+      "category_label": "Cold Drinks & Juices",
+      "health_score": 3.0,
+      "health_status": "High Sugar & Synthetic Caffeine",
+      "score_label": "Harmful",
+      "mrp": "₹20.00",
+      "barcode": "8901491104884",
+      "image_url": "https://images.unsplash.com/photo-1622483767028-3f66f32aef97?w=400&auto=format&fit=crop&q=80",
+      "key_ingredients": [
+        "Carbonated Water",
+        "Sugar (30.8g per 250ml)",
+        "Caffeine (72mg)",
+        "Inositol",
+        "Taurine",
+        "Brilliant Blue FCF (E133)"
+      ],
+      "alarms": [
+        {
+          "type": "excessive_sugar",
+          "title": "31g Sugar per 250ml can",
+          "message": "Extreme sugar density causing acute insulin spikes."
+        },
+        {
+          "type": "restricted_additive",
+          "title": "Synthetic Color (E133)",
+          "message": "Petroleum-derived synthetic blue dye."
+        }
+      ],
+      "clean_alternatives": [
+        {
+          "product_name": "Paper Boat Tender Coconut Water (200ml)",
+          "brand": "Paper Boat",
+          "health_score": 9.6,
+          "price": "₹50",
+          "key_differentiators": [
+            "100% Pure Coconut Water",
+            "0g Added Sugar",
+            "Natural electrolytes (Potassium & Magnesium)"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "nutella_spread",
+      "name": "Nutella Hazelnut Spread with Cocoa (350g)",
+      "brand": "Ferrero India",
+      "category": "breakfast_spreads",
+      "category_label": "Breakfast & Spreads",
+      "health_score": 3.9,
+      "health_status": "56% Sugar & Palm Oil",
+      "score_label": "Harmful",
+      "mrp": "₹399.00",
+      "barcode": "8000500179864",
+      "image_url": "https://images.unsplash.com/photo-1589301760014-d929f3979dbc?w=400&auto=format&fit=crop&q=80",
+      "key_ingredients": [
+        "Sugar (56.3%)",
+        "Palm Oil (31%)",
+        "Hazelnuts (13%)",
+        "Skimmed Milk Powder",
+        "Cocoa (7.4%)",
+        "Lecithin"
+      ],
+      "alarms": [
+        {
+          "type": "excessive_sugar",
+          "title": "Over 56% Sugar",
+          "message": "More than half the entire jar is refined sugar."
+        },
+        {
+          "type": "palm_oil",
+          "title": "Primary Fat is Palm Oil",
+          "message": "Contains more palm oil than actual hazelnuts."
+        }
+      ],
+      "clean_alternatives": [
+        {
+          "product_name": "The Whole Truth Hazelnut Cocoa Spread",
+          "brand": "The Whole Truth Foods",
+          "health_score": 9.5,
+          "price": "₹449",
+          "key_differentiators": [
+            "0g Added Refined Sugar (Dates sweetened)",
+            "0% Palm Oil",
+            "60% Whole Roasted Hazelnuts (vs 13% in Nutella)"
+          ]
+        },
+        {
+          "product_name": "Pintola All-Natural Dark Chocolate Peanut Butter",
+          "brand": "Pintola",
+          "health_score": 9.0,
+          "price": "₹299",
+          "key_differentiators": [
+            "100% Roasted Peanuts & Real Cocoa",
+            "No Hydrogenated Oils",
+            "High Protein (26g/100g)"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "kurkure_masala",
+      "name": "Kurkure Masala Munch (90g)",
+      "brand": "PepsiCo India",
+      "category": "chips_munchies",
+      "category_label": "Chips & Munchies",
+      "health_score": 4.1,
+      "health_status": "Palmolein Fried & High Sodium",
+      "score_label": "Poor",
+      "mrp": "₹20.00",
+      "barcode": "8901491100015",
+      "image_url": "https://images.unsplash.com/photo-1566478989037-eec170784d0b?w=400&auto=format&fit=crop&q=80",
+      "key_ingredients": [
+        "Rice Meal (42.8%)",
+        "Edible Vegetable Oil (Palmolein)",
+        "Corn Meal (19.8%)",
+        "Spices and Condiments",
+        "Salt",
+        "Flavour Enhancers (E627, E631)"
+      ],
+      "alarms": [
+        {
+          "type": "palm_oil",
+          "title": "Deep Fried in Palmolein",
+          "message": "Extruded snack deep fried in hydrogenated palmolein."
+        },
+        {
+          "type": "excess_sodium",
+          "title": "High Sodium (890mg/100g)",
+          "message": "Contributes to daily sodium spikes."
+        }
+      ],
+      "clean_alternatives": [
+        {
+          "product_name": "Farmley Roasted Peri Peri Makhana",
+          "brand": "Farmley",
+          "health_score": 9.3,
+          "price": "₹120",
+          "key_differentiators": [
+            "Slow-roasted Fox Nuts (Never deep-fried)",
+            "Zero Palm Oil (uses olive oil spray)",
+            "Rich in calcium and plant protein"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "lays_classic",
+      "name": "Lay's India's Magic Masala Potato Chips (50g)",
+      "brand": "PepsiCo India",
+      "category": "chips_munchies",
+      "category_label": "Chips & Munchies",
+      "health_score": 4.5,
+      "health_status": "Palmolein Fried & High Sodium",
+      "score_label": "Poor",
+      "mrp": "₹20.00",
+      "barcode": "8901491101838",
+      "image_url": "https://images.unsplash.com/photo-1566478989037-eec170784d0b?w=400&auto=format&fit=crop&q=80",
+      "key_ingredients": [
+        "Potato (52%)",
+        "Edible Vegetable Oil (Palmolein)",
+        "Spices & Condiments",
+        "Salt",
+        "Flavour Enhancers (E627, E631)"
+      ],
+      "alarms": [
+        {
+          "type": "palm_oil",
+          "title": "Deep Fried in Palmolein",
+          "message": "High thermal oxidation and saturated fats."
+        },
+        {
+          "type": "excess_sodium",
+          "title": "High Sodium (950mg/100g)",
+          "message": "Exceeds safe snack threshold."
+        }
+      ],
+      "clean_alternatives": [
+        {
+          "product_name": "TagZ Popped Potato Chips",
+          "brand": "TagZ Foods",
+          "health_score": 8.6,
+          "price": "₹50",
+          "key_differentiators": [
+            "Popped with heat & pressure (0% fried)",
+            "50% less fat than Lay's",
+            "Zero palm oil"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "kissan_ketchup",
+      "name": "Kissan Fresh Tomato Ketchup (950g)",
+      "brand": "Hindustan Unilever",
+      "category": "sauces_condiments",
+      "category_label": "Sauces & Condiments",
+      "health_score": 4.2,
+      "health_status": "High Fructose Corn Syrup & Sugar",
+      "score_label": "Poor",
+      "mrp": "₹130.00",
+      "barcode": "8901030384173",
+      "image_url": "https://images.unsplash.com/photo-1607623814075-e51df1bdc82f?w=400&auto=format&fit=crop&q=80",
+      "key_ingredients": [
+        "Water",
+        "Tomato Paste (28%)",
+        "Sugar (32g/100g)",
+        "Liquid Glucose",
+        "Preservative (E211)",
+        "Thickener (E1422)"
+      ],
+      "alarms": [
+        {
+          "type": "excessive_sugar",
+          "title": "32% Sugar & Glucose",
+          "message": "1 tablespoon contains almost 1 full teaspoon of sugar."
+        },
+        {
+          "type": "restricted_additive",
+          "title": "Sodium Benzoate (E211)",
+          "message": "Chemical preservative."
+        }
+      ],
+      "clean_alternatives": [
+        {
+          "product_name": "The Good Stuff Clean Tomato Ketchup",
+          "brand": "The Good Stuff",
+          "health_score": 9.2,
+          "price": "₹175",
+          "key_differentiators": [
+            "85% Real Sun-Ripened Tomatoes",
+            "Sweetened with Organic Jaggery",
+            "Zero chemical preservatives (E211 free)"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "borges_olive_oil",
+      "name": "Borges Extra Virgin Olive Oil (1L)",
+      "brand": "Borges Agricultural",
+      "category": "cooking_oils_ghee",
+      "category_label": "Cooking Oils & Ghee",
+      "health_score": 9.5,
+      "health_status": "100% Pure Cold-Pressed",
+      "score_label": "Excellent",
+      "mrp": "₹1,450.00",
+      "barcode": "8410179010025",
+      "image_url": "https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=400&auto=format&fit=crop&q=80",
+      "key_ingredients": [
+        "100% Extra Virgin Cold Pressed Olive Oil"
+      ],
+      "alarms": [],
+      "clean_alternatives": [
+        {
+          "product_name": "Anveshan Wood-Pressed Mustard Oil",
+          "brand": "Anveshan",
+          "health_score": 9.6,
+          "price": "₹399 / 1L",
+          "key_differentiators": [
+            "Kolhu wood-pressed under 45°C",
+            "Zero chemical hexane solvent extraction",
+            "Rich in natural Omega-3 & antioxidants"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "fmcg_8901542000027",
+      "name": "Complan",
+      "brand": "FMCG Brand",
+      "category": "packaged_food",
+      "category_label": "Packaged Food",
+      "health_score": 8.5,
+      "health_status": "Healthy Choice",
+      "score_label": "Clean & Safe",
+      "mrp": "₹20–50",
+      "barcode": "8901542000027",
+      "image_url": "https://images.openfoodfacts.org/images/products/890/154/200/0027/front_en.3.400.jpg",
+      "key_ingredients": [
+        "Refined Flour",
+        "Sugar",
+        "Edible Vegetable Oil"
+      ],
+      "alarms": [],
+      "clean_alternatives": []
+    }
+  ]
+}
