@@ -12,13 +12,14 @@ async def analyze_image_with_gemini(image_base64: str = None, preset: str = None
         return _get_preset_data("olive_oil")
 
     if settings.GEMINI_API_KEY:
-        return await _call_gemini_api(image_base64)
-    return _mock_ocr_from_image(image_base64)
+        return await _call_gemini_api(image_base64, preset=preset)
+    return _mock_ocr_from_image(image_base64, preset=preset)
 
 
-async def _call_gemini_api(image_base64: str) -> dict:
+async def _call_gemini_api(image_base64: str, preset: str = None) -> dict:
     try:
         import httpx
+        import re
 
         # Determine MIME type and clean base64 data
         mime_type = "image/jpeg"
@@ -92,14 +93,12 @@ IMPORTANT:
         candidate_models = [
             settings.GEMINI_MODEL,
             "gemini-3.6-flash",
-            "gemini-3.7-flash",
-            "gemini-3.8-flash",
             "gemini-flash-latest"
         ]
         # Deduplicate while preserving order
         candidate_models = list(dict.fromkeys(m for m in candidate_models if m))
 
-        async with httpx.AsyncClient(timeout=45.0) as client:
+        async with httpx.AsyncClient(timeout=12.0) as client:
             for model_name in candidate_models:
                 try:
                     url = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent?key={settings.GEMINI_API_KEY}"
@@ -124,29 +123,25 @@ IMPORTANT:
                                 if "text" in p and not p.get("thought", False):
                                     text += p["text"]
                             text = text.strip()
-                            if text.startswith("```json"):
-                                text = text[7:]
-                            elif text.startswith("```"):
-                                text = text[3:]
-                            if text.endswith("```"):
-                                text = text[:-3]
-                            text = text.strip()
+                            json_match = re.search(r"\{.*\}", text, re.DOTALL)
+                            if json_match:
+                                text = json_match.group(0)
                             parsed = json.loads(text)
                             print(f"[Gemini Vision Success] Analyzed packaging using {model_name}: {parsed.get('product_name')}")
                             return parsed
                     else:
                         print(f"[Gemini Vision {model_name} Error {response.status_code}]: {response.text[:200]}")
                 except Exception as model_err:
-                    print(f"[Gemini Vision Model {model_name} Failed]: {model_err}")
+                    print(f"[Gemini Vision Model {model_name} Failed]: {type(model_err).__name__} - {model_err}")
                     continue
 
     except Exception as e:
         print(f"[Gemini Vision Overall Exception] {e}")
 
-    return _mock_ocr_from_image(image_base64)
+    return _mock_ocr_from_image(image_base64, preset=preset)
 
 
-def _mock_ocr_from_image(image_base64: str) -> dict:
+def _mock_ocr_from_image(image_base64: str = None, preset: str = None) -> dict:
     mock_products = [
         {
             "product_name": "Maggi 2-Minute Masala Noodles",

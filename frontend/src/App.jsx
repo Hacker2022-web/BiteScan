@@ -22,8 +22,18 @@ import { scanProduct, getPresets } from './services/api';
 import { saveScanToSupabase } from './services/supabaseService';
 
 export default function App() {
-  const [role, setRole] = useState('citizen');
-  const [showIntro, setShowIntro] = useState(true); // Startup video & portal pop-up
+  const [role, setRole] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return sessionStorage.getItem('bitescan_role') || 'citizen';
+    }
+    return 'citizen';
+  });
+  const [showIntro, setShowIntro] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return !sessionStorage.getItem('bitescan_role');
+    }
+    return true;
+  });
   const [citizenTab, setCitizenTab] = useState('home'); // 'home', 'search', 'categories', 'bot', 'scan'
   const [scanData, setScanData] = useState(null);
   const [presets, setPresets] = useState([]);
@@ -63,13 +73,20 @@ export default function App() {
   }, [role]);
 
   const handleRoleSelect = (selectedRole) => {
+    if (typeof window !== 'undefined') {
+      sessionStorage.setItem('bitescan_role', selectedRole);
+    }
     setRole(selectedRole);
     setScanData(null);
     setActivePreset(null);
     setCitizenTab('home');
+    setShowIntro(false);
   };
 
   const handleRoleChange = (newRole) => {
+    if (typeof window !== 'undefined') {
+      sessionStorage.setItem('bitescan_role', newRole);
+    }
     setRole(newRole);
     setScanData(null);
     setActivePreset(null);

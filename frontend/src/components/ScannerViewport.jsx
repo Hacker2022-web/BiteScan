@@ -1,47 +1,80 @@
 import React, { useRef, useState, useCallback } from 'react';
 import { Camera, Upload, X, Loader2, ScanLine, CheckCircle2, AlertTriangle } from 'lucide-react';
 
-function compressAndProcessImage(file, maxDimension = 1600, quality = 0.85) {
-  return new Promise((resolve, reject) => {
-    if (!file || !file.type.startsWith('image/')) {
-      return reject(new Error('Invalid image file'));
+async function compressAndProcessImage(file, maxDimension = 1200, quality = 0.8) {
+  if (!file || !file.type.startsWith('image/')) {
+    throw new Error('Invalid image file');
+  }
+
+  // Modern off-thread decode: createImageBitmap uses 0 main-thread memory and no dataURL copy
+  if (typeof window !== 'undefined' && 'createImageBitmap' in window) {
+    try {
+      const bitmap = await createImageBitmap(file);
+      let width = bitmap.width;
+      let height = bitmap.height;
+
+      if (width > maxDimension || height > maxDimension) {
+        if (width > height) {
+          height = Math.round((height * maxDimension) / width);
+          width = maxDimension;
+        } else {
+          width = Math.round((width * maxDimension) / height);
+          height = maxDimension;
+        }
+      }
+
+      const canvas = document.createElement('canvas');
+      canvas.width = width;
+      canvas.height = height;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(bitmap, 0, 0, width, height);
+      bitmap.close(); // Instantly release GPU/RAM buffer
+
+      const compressedDataUrl = canvas.toDataURL('image/jpeg', quality);
+      const base64 = compressedDataUrl.split(',')[1];
+      return { previewUrl: compressedDataUrl, base64 };
+    } catch (e) {
+      console.warn('createImageBitmap fallback:', e);
     }
-    const reader = new FileReader();
-    reader.onerror = () => reject(new Error('Failed to read image file'));
-    reader.onload = (e) => {
-      const img = new Image();
-      img.onerror = () => reject(new Error('Failed to parse image'));
-      img.onload = () => {
-        let width = img.width;
-        let height = img.height;
+  }
 
-        if (width > maxDimension || height > maxDimension) {
-          if (width > height) {
-            height = Math.round((height * maxDimension) / width);
-            width = maxDimension;
-          } else {
-            width = Math.round((width * maxDimension) / height);
-            height = maxDimension;
-          }
+  // Safe fallback via URL.createObjectURL (never read raw 25MB file into string)
+  return new Promise((resolve, reject) => {
+    const objectUrl = URL.createObjectURL(file);
+    const img = new Image();
+
+    img.onload = () => {
+      URL.revokeObjectURL(objectUrl);
+      let width = img.width;
+      let height = img.height;
+
+      if (width > maxDimension || height > maxDimension) {
+        if (width > height) {
+          height = Math.round((height * maxDimension) / width);
+          width = maxDimension;
+        } else {
+          width = Math.round((width * maxDimension) / height);
+          height = maxDimension;
         }
+      }
 
-        const canvas = document.createElement('canvas');
-        canvas.width = width;
-        canvas.height = height;
-        const ctx = canvas.getContext('2d');
-        if (!ctx) {
-          const rawBase64 = e.target.result.split(',')[1];
-          return resolve({ previewUrl: e.target.result, base64: rawBase64 });
-        }
+      const canvas = document.createElement('canvas');
+      canvas.width = width;
+      canvas.height = height;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0, width, height);
 
-        ctx.drawImage(img, 0, 0, width, height);
-        const compressedDataUrl = canvas.toDataURL('image/jpeg', quality);
-        const base64 = compressedDataUrl.split(',')[1];
-        resolve({ previewUrl: compressedDataUrl, base64 });
-      };
-      img.src = e.target.result;
+      const compressedDataUrl = canvas.toDataURL('image/jpeg', quality);
+      const base64 = compressedDataUrl.split(',')[1];
+      resolve({ previewUrl: compressedDataUrl, base64 });
     };
-    reader.readAsDataURL(file);
+
+    img.onerror = () => {
+      URL.revokeObjectURL(objectUrl);
+      reject(new Error('Failed to load image'));
+    };
+
+    img.src = objectUrl;
   });
 }
 
