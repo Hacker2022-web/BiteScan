@@ -5,14 +5,29 @@ export default function IntroModal({ isOpen, onClose, onSelectRole }) {
   const [phase, setPhase] = useState('video'); // 'video' | 'select'
   const [isMuted, setIsMuted] = useState(true);
   const [videoProgress, setVideoProgress] = useState(0);
+  const [isMobile, setIsMobile] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return window.innerWidth < 768 || window.innerHeight > window.innerWidth;
+    }
+    return false;
+  });
   const videoRef = useRef(null);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768 || window.innerHeight > window.innerWidth);
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  const videoSource = isMobile ? '/intro_mobile.mp4' : '/intro.mp4';
 
   useEffect(() => {
     if (isOpen) {
       setPhase('video');
       setVideoProgress(0);
 
-      // Force immediate fullscreen video autoplay
       const timer = setTimeout(() => {
         if (videoRef.current) {
           videoRef.current.currentTime = 0;
@@ -24,7 +39,7 @@ export default function IntroModal({ isOpen, onClose, onSelectRole }) {
 
       return () => clearTimeout(timer);
     }
-  }, [isOpen]);
+  }, [isOpen, videoSource]);
 
   const handleTimeUpdate = () => {
     if (videoRef.current && videoRef.current.duration) {
@@ -64,10 +79,11 @@ export default function IntroModal({ isOpen, onClose, onSelectRole }) {
       {phase === 'video' && (
         <div className="relative w-full h-full flex items-center justify-center bg-black overflow-hidden animate-fade">
           
-          {/* Ambient Blurred Background for Vertical Phone Screens */}
+          {/* Ambient Blurred Background for Depth */}
           <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-30 select-none">
             <video
-              src="/intro.mp4"
+              key={`ambient-${videoSource}`}
+              src={videoSource}
               className="w-full h-full object-cover blur-3xl scale-125"
               playsInline
               autoPlay
@@ -76,12 +92,13 @@ export default function IntroModal({ isOpen, onClose, onSelectRole }) {
             />
           </div>
 
-          {/* Fullscreen Video Element — Pure Uncropped 16:9 Aspect Ratio */}
+          {/* Fullscreen Video Element — Native Phone 9:16 on Mobile, 16:9 on Desktop */}
           <div className="relative z-10 w-full h-full flex items-center justify-center p-0">
             <video
+              key={`main-${videoSource}`}
               ref={videoRef}
-              src="/intro.mp4"
-              className="w-full h-full max-h-screen object-contain cursor-pointer drop-shadow-2xl"
+              src={videoSource}
+              className="w-full h-full max-h-screen object-contain sm:object-contain cursor-pointer drop-shadow-2xl"
               playsInline
               autoPlay
               muted={isMuted}
