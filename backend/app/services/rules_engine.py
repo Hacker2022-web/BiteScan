@@ -80,16 +80,17 @@ def check_compliance(ocr_data: dict, scale_data: dict = None) -> dict:
 
 def _check_mrp_inclusive(ocr_data: dict) -> dict:
     mrp_text = ""
-    for region in ocr_data.get("detected_text_regions", []):
-        if region.get("category") == "mrp":
-            mrp_text = region.get("text", "")
+    for region in ocr_data.get("detected_text_regions") or []:
+        if isinstance(region, dict) and region.get("category") == "mrp":
+            mrp_text = str(region.get("text") or "")
             break
 
     if not mrp_text:
-        mrp_text = ocr_data.get("mrp_declaration", "")
+        mrp_text = str(ocr_data.get("mrp_declaration") or "")
 
-    inclusive = "inclusive" in mrp_text.lower() and "tax" in mrp_text.lower()
-    has_mrp = "mrp" in mrp_text.lower() or "rp" in mrp_text.lower()
+    mrp_lower = mrp_text.lower()
+    inclusive = "inclusive" in mrp_lower and "tax" in mrp_lower
+    has_mrp = "mrp" in mrp_lower or "rp" in mrp_lower or "₹" in mrp_lower or "rs" in mrp_lower
 
     return {
         "rule": "Rule 6(1)(e)",
@@ -103,42 +104,41 @@ def _check_mrp_inclusive(ocr_data: dict) -> dict:
 
 
 def _check_si_units(ocr_data: dict) -> dict:
-    net_qty = ocr_data.get("net_quantity", "")
+    net_qty = str(ocr_data.get("net_quantity") or "").strip()
     illegal_patterns = ["gms", "gms.", "kgs", "kgs.", "ltrs", "ltrs.", "ML.", "MLs", "MLs."]
     found_illegal = [p for p in illegal_patterns if p.lower() in net_qty.lower()]
 
-    si_patterns = ["g ", "g\n", "kg ", "ml ", "l ", "kg\n", "ml\n", "l\n"]
     has_valid_unit = any(
-        net_qty.strip().lower().endswith(u.strip()) for u in ["g", "kg", "ml", "l"]
-    ) or re.match(r"^\d+\.?\d*\s*(g|kg|ml|l)$", net_qty.strip(), re.IGNORECASE) is not None
+        net_qty.lower().endswith(u.strip()) for u in ["g", "kg", "ml", "l"]
+    ) or re.match(r"^\d+\.?\d*\s*(g|kg|ml|l)$", net_qty, re.IGNORECASE) is not None
 
     return {
         "rule": "Rule 6(1)(c)",
         "description": "Net quantity must use standard SI units (g, kg, ml, l)",
         "passed": has_valid_unit and len(found_illegal) == 0,
         "severity": "high",
-        "found": net_qty,
+        "found": net_qty if net_qty else "Net quantity not found",
         "expected": "e.g., '70 g', '500 ml', '1 kg'",
         "illegal_units_found": found_illegal,
-        "remedy": f"Replace illegal units ({', '.join(found_illegal)}) with SI units"
+        "remedy": f"Replace illegal units ({', '.join(found_illegal)}) with SI units" if found_illegal else "Declare quantity with SI units"
     }
 
 
 def _check_packing_date(ocr_data: dict) -> dict:
     date_found = False
     date_text = ""
-    for region in ocr_data.get("detected_text_regions", []):
-        if region.get("category") == "date":
-            date_text = region.get("text", "")
+    for region in ocr_data.get("detected_text_regions") or []:
+        if isinstance(region, dict) and region.get("category") == "date":
+            date_text = str(region.get("text") or "")
             date_found = True
             break
 
     if not date_text:
-        date_text = ocr_data.get("date_of_packing", "")
+        date_text = str(ocr_data.get("date_of_packing") or "")
         date_found = bool(date_text)
 
     date_pattern = r"\d{2}/\d{2}/\d{4}|\d{2}-\d{2}-\d{4}|\d{2}\.\d{2}\.\d{4}"
-    valid_format = bool(re.match(date_pattern, date_text)) if date_text else False
+    valid_format = bool(re.search(date_pattern, date_text)) if date_text else False
 
     return {
         "rule": "Rule 6(1)(d)",
@@ -153,15 +153,15 @@ def _check_packing_date(ocr_data: dict) -> dict:
 
 def _check_country_of_origin(ocr_data: dict) -> dict:
     origin = ""
-    for region in ocr_data.get("detected_text_regions", []):
-        if region.get("category") == "origin":
-            origin = region.get("text", "")
+    for region in ocr_data.get("detected_text_regions") or []:
+        if isinstance(region, dict) and region.get("category") == "origin":
+            origin = str(region.get("text") or "")
             break
 
     if not origin:
-        origin = ocr_data.get("country_of_origin", "")
+        origin = str(ocr_data.get("country_of_origin") or "")
 
-    has_origin = bool(origin) and origin.lower() not in ["", "not found", "unknown"]
+    has_origin = bool(origin) and origin.strip().lower() not in ["", "not found", "unknown", "none", "null"]
 
     return {
         "rule": "Rule 6(1)(da)",
@@ -186,19 +186,19 @@ def _check_font_height(ocr_data: dict, scale_data: dict, rules: dict) -> dict:
             "remedy": "Use barcode calibration to measure font height"
         }
 
-    net_qty_str = ocr_data.get("net_quantity", "0")
+    net_qty_str = str(ocr_data.get("net_quantity") or "0")
     net_qty_g = _parse_net_quantity_to_grams(net_qty_str)
-    brackets = rules.get("rule_7", {}).get("schedule_ii", {}).get("brackets", [])
+    brackets = rules.get("rule_7", {}).get("schedule_ii", {}).get("brackets") or []
 
     required_height = 1.0
     for bracket in brackets:
-        if bracket["net_quantity_min_g"] <= net_qty_g <= bracket["net_quantity_max_g"]:
-            required_height = bracket["min_height_mm"]
+        if bracket.get("net_quantity_min_g", 0) <= net_qty_g <= bracket.get("net_quantity_max_g", 999999):
+            required_height = bracket.get("min_height_mm", 1.0)
             break
 
     violations = []
-    for measurement in scale_data["measured_font_heights"]:
-        if measurement["physical_height_mm"] < required_height:
+    for measurement in scale_data.get("measured_font_heights") or []:
+        if float(measurement.get("physical_height_mm") or 0) < required_height:
             violations.append(measurement)
 
     all_pass = len(violations) == 0
@@ -212,7 +212,7 @@ def _check_font_height(ocr_data: dict, scale_data: dict, rules: dict) -> dict:
         "expected": f"Minimum {required_height}mm numeral height",
         "required_height_mm": required_height,
         "violations": [
-            {"text": v["text"], "measured_mm": v["physical_height_mm"]}
+            {"text": v.get("text", ""), "measured_mm": v.get("physical_height_mm", 0)}
             for v in violations
         ],
         "remedy": f"Increase numeral font height to at least {required_height}mm"
@@ -220,8 +220,8 @@ def _check_font_height(ocr_data: dict, scale_data: dict, rules: dict) -> dict:
 
 
 def _check_net_quantity(ocr_data: dict) -> dict:
-    net_qty = ocr_data.get("net_quantity", "")
-    has_qty = bool(net_qty) and net_qty.lower() not in ["", "not found", "unknown"]
+    net_qty = str(ocr_data.get("net_quantity") or "").strip()
+    has_qty = bool(net_qty) and net_qty.lower() not in ["", "not found", "unknown", "none", "null"]
 
     return {
         "rule": "Rule 6(1)(b)",
@@ -235,32 +235,30 @@ def _check_net_quantity(ocr_data: dict) -> dict:
 
 
 def _parse_net_quantity_to_grams(qty_str: str) -> float:
-    match = re.match(r"(\d+\.?\d*)\s*(g|kg|ml|l)", qty_str.lower().strip())
+    match = re.match(r"(\d+\.?\d*)\s*(g|kg|ml|l)", str(qty_str or "").lower().strip())
     if not match:
         return 100.0
 
-    value = float(match.group(1))
-    unit = match.group(2)
-
-    if unit == "kg":
-        return value * 1000
-    elif unit == "l":
-        return value * 1000
-    elif unit == "ml":
+    try:
+        value = float(match.group(1))
+        unit = match.group(2)
+        if unit in ["kg", "l"]:
+            return value * 1000.0
         return value
-    return value
+    except (ValueError, TypeError):
+        return 100.0
 
 
 def _check_manufacturer(ocr_data: dict) -> dict:
-    mfg = ocr_data.get("manufacturer", "")
-    pincode = ocr_data.get("manufacturer_pincode") or ""
+    mfg = str(ocr_data.get("manufacturer") or "").strip()
+    pincode = str(ocr_data.get("manufacturer_pincode") or "").strip()
 
     if not pincode and mfg:
         pin_match = re.search(r"\b[1-9][0-9]{5}\b", mfg)
         if pin_match:
             pincode = pin_match.group(0)
 
-    has_mfg = bool(mfg) and len(mfg.strip()) > 5
+    has_mfg = bool(mfg) and len(mfg) > 5 and mfg.lower() not in ["not found", "unknown", "none", "null"]
     has_valid_address = has_mfg and bool(pincode)
 
     return {
@@ -276,9 +274,9 @@ def _check_manufacturer(ocr_data: dict) -> dict:
 
 
 def _check_consumer_care(ocr_data: dict) -> dict:
-    cc_text = ocr_data.get("customer_care", "") or ""
-    email = ocr_data.get("customer_care_email") or ""
-    phone = ocr_data.get("customer_care_phone") or ""
+    cc_text = str(ocr_data.get("customer_care") or "").strip()
+    email = str(ocr_data.get("customer_care_email") or "").strip()
+    phone = str(ocr_data.get("customer_care_phone") or "").strip()
 
     if not email and cc_text:
         email_match = re.search(r"[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+", cc_text)
@@ -290,8 +288,8 @@ def _check_consumer_care(ocr_data: dict) -> dict:
         if phone_match:
             phone = phone_match.group(0)
 
-    has_email = bool(email)
-    has_phone = bool(phone)
+    has_email = bool(email) and "@" in email
+    has_phone = bool(phone) and len(phone) >= 8
     passed = has_email and has_phone
 
     return {
@@ -308,16 +306,16 @@ def _check_consumer_care(ocr_data: dict) -> dict:
 
 
 def _check_unit_sale_price(ocr_data: dict) -> dict:
-    net_qty_str = ocr_data.get("net_quantity", "0")
+    net_qty_str = str(ocr_data.get("net_quantity") or "0")
     net_qty_g = _parse_net_quantity_to_grams(net_qty_str)
-    usp = ocr_data.get("unit_sale_price")
+    usp = str(ocr_data.get("unit_sale_price") or "").strip()
 
     mandatory = net_qty_g > 100.0
     passed = True
     found_desc = usp or "Not declared"
 
     if mandatory:
-        passed = bool(usp) and usp.strip().lower() not in ["null", "none", "not declared", ""]
+        passed = bool(usp) and usp.lower() not in ["null", "none", "not declared", "", "unknown"]
         if not passed:
             found_desc = f"Net Qty {net_qty_str} (>100g) but USP is missing"
 
@@ -328,5 +326,5 @@ def _check_unit_sale_price(ocr_data: dict) -> dict:
         "severity": "medium",
         "found": found_desc,
         "expected": "e.g., '₹ 0.20 / g' or '₹ 20.00 / 100 g'",
-        "remedy": "Declare Unit Sale Price rounded off to nearest paise per g or ml"
+        "remedy": "Declare Unit Sale Price rounded to nearest rupee or paisa per g/ml"
     }

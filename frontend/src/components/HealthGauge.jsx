@@ -1,9 +1,10 @@
 import React from 'react';
 
 export default function HealthGauge({ score, label }) {
+  const numScore = typeof score === 'number' ? score : (!isNaN(parseFloat(score)) ? parseFloat(score) : 0);
   const radius = 45;
   const circumference = 2 * Math.PI * radius;
-  const percentage = ((score || 0) / 10) * 100;
+  const percentage = Math.max(0, Math.min(100, (numScore / 10) * 100));
   const offset = circumference - (percentage / 100) * circumference;
 
   const getColor = (s) => {
@@ -12,7 +13,7 @@ export default function HealthGauge({ score, label }) {
     return { stroke: '#DC2626', bg: '#FEE2E2', text: 'text-crimson' };
   };
 
-  const colors = getColor(score);
+  const colors = getColor(numScore);
 
   return (
     <div className="bg-white rounded-2xl border border-oatmeal-dark shadow-sm p-6 flex flex-col items-center animate-slide-up">
@@ -39,14 +40,14 @@ export default function HealthGauge({ score, label }) {
         </svg>
         <div className="absolute inset-0 flex flex-col items-center justify-center">
           <span className={`text-3xl font-extrabold font-mono ${colors.text}`}>
-            {score?.toFixed(1) || '—'}
+            {numScore > 0 ? numScore.toFixed(1) : '—'}
           </span>
           <span className="text-[10px] text-slate font-medium">/ 10.0</span>
         </div>
       </div>
 
       <div className={`mt-3 px-3 py-1 rounded-full text-xs font-bold ${colors.text}`} style={{ backgroundColor: colors.bg }}>
-        {label || (score >= 8.0 ? 'Excellent' : score >= 5.0 ? 'Moderate' : score >= 3.0 ? 'Poor' : 'Harmful')}
+        {label || (numScore >= 8.0 ? 'Excellent' : numScore >= 5.0 ? 'Moderate' : numScore >= 3.0 ? 'Poor' : 'Harmful')}
       </div>
 
       <div className="mt-4 w-full">

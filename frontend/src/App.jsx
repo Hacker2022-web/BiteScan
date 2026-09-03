@@ -17,6 +17,7 @@ import ScaleHUD from './components/ScaleHUD';
 import NoticeModal from './components/NoticeModal';
 import EcommerceAuditor from './components/EcommerceAuditor';
 import IntroModal from './components/IntroModal';
+import ErrorBoundary from './components/ErrorBoundary';
 import { scanProduct, getPresets } from './services/api';
 import { saveScanToSupabase } from './services/supabaseService';
 
@@ -56,7 +57,7 @@ export default function App() {
       saveScanToSupabase(data, role);
     } catch (err) {
       console.error('Scan failed:', err);
-      setError('Scan failed. Make sure the backend is running on localhost:8000');
+      setError('Scan failed. Please check network connection or try taking the photo again.');
     }
     setScanning(false);
   }, [role]);
@@ -151,15 +152,17 @@ export default function App() {
             )}
 
             {citizenTab === 'scan' && (
-              <CitizenScanView
-                scanData={scanData}
-                scanning={scanning}
-                presets={presets}
-                activePreset={activePreset}
-                onScan={handleScan}
-                onPresetSelect={(id) => setActivePreset(id)}
-                onBackToHome={() => setCitizenTab('home')}
-              />
+              <ErrorBoundary onReset={() => { setScanData(null); setError(null); }}>
+                <CitizenScanView
+                  scanData={scanData}
+                  scanning={scanning}
+                  presets={presets}
+                  activePreset={activePreset}
+                  onScan={handleScan}
+                  onPresetSelect={(id) => setActivePreset(id)}
+                  onBackToHome={() => setCitizenTab('home')}
+                />
+              </ErrorBoundary>
             )}
 
             {/* Floating Mobile Bottom Nav */}
@@ -170,15 +173,17 @@ export default function App() {
             />
           </div>
         ) : (
-          <InspectorView
-            scanData={scanData}
-            scanning={scanning}
-            presets={presets}
-            activePreset={activePreset}
-            onScan={handleScan}
-            onPresetSelect={(id) => setActivePreset(id)}
-            onGenerateNotice={() => setShowNoticeModal(true)}
-          />
+          <ErrorBoundary onReset={() => { setScanData(null); setError(null); }}>
+            <InspectorView
+              scanData={scanData}
+              scanning={scanning}
+              presets={presets}
+              activePreset={activePreset}
+              onScan={handleScan}
+              onPresetSelect={(id) => setActivePreset(id)}
+              onGenerateNotice={() => setShowNoticeModal(true)}
+            />
+          </ErrorBoundary>
         )}
       </main>
 

@@ -27,11 +27,11 @@ def analyze_health(ocr_data: dict) -> dict:
     addons = _load_additives()
     alts_db = _load_alternatives()
 
-    ingredients = ocr_data.get("ingredients", [])
-    additives_detected = ocr_data.get("additives", [])
-    nutrition = ocr_data.get("nutrition_per_100g", {})
-    sugar_rank = ocr_data.get("sugar_rank_in_ingredients", 0)
-    has_palm_oil = ocr_data.get("contains_palm_oil", False)
+    ingredients = ocr_data.get("ingredients") or []
+    additives_detected = ocr_data.get("additives") or []
+    nutrition = ocr_data.get("nutrition_per_100g") or {}
+    sugar_rank = int(ocr_data.get("sugar_rank_in_ingredients") or 0)
+    has_palm_oil = bool(ocr_data.get("contains_palm_oil", False))
 
     alerts = []
     score = 10.0
@@ -52,27 +52,27 @@ def analyze_health(ocr_data: dict) -> dict:
         alerts.append(sugar_alert)
         score -= 2.0
 
-    banned_found = _check_banned_additives(additives_detected, addons.get("banned", []))
+    banned_found = _check_banned_additives(additives_detected, addons.get("banned") or [])
     for b in banned_found:
         alerts.append({
             "type": "banned_additive",
             "severity": "high",
             "icon": "banned",
-            "title": f"Banned/Restricted: {b['code']} ({b['name']})",
-            "message": f"FSSAI status: {b['fssai_status']}. Risk: {b['effects']}",
-            "code": b["code"]
+            "title": f"Banned/Restricted: {b.get('code', '')} ({b.get('name', '')})",
+            "message": f"FSSAI status: {b.get('fssai_status', 'Restricted')}. Risk: {b.get('effects', 'Health risk')}",
+            "code": b.get("code", "")
         })
         score -= 1.5
 
-    restricted_found = _check_restricted_additives(additives_detected, addons.get("restricted", []))
+    restricted_found = _check_restricted_additives(additives_detected, addons.get("restricted") or [])
     for r in restricted_found:
         alerts.append({
             "type": "restricted_additive",
             "severity": "medium",
             "icon": "warning",
-            "title": f"Restricted: {r['code']} ({r['name']})",
-            "message": f"FSSAI status: {r['fssai_status']}. {r['effects']}",
-            "code": r["code"]
+            "title": f"Restricted: {r.get('code', '')} ({r.get('name', '')})",
+            "message": f"FSSAI status: {r.get('fssai_status', 'Permitted with limits')}. {r.get('effects', '')}",
+            "code": r.get("code", "")
         })
         score -= 0.5
 
@@ -105,14 +105,14 @@ def analyze_health(ocr_data: dict) -> dict:
         "alert_count": len(alerts),
         "alternatives": alternatives,
         "nutrition_summary": {
-            "energy_kcal": nutrition.get("energy_kcal", 0),
-            "sugar_g": nutrition.get("sugar_g", 0),
-            "fat_g": nutrition.get("fat_g", 0),
-            "saturated_fat_g": nutrition.get("saturated_fat_g", 0),
-            "trans_fat_g": nutrition.get("trans_fat_g", 0),
-            "sodium_mg": nutrition.get("sodium_mg", 0),
-            "protein_g": nutrition.get("protein_g", 0),
-            "fiber_g": nutrition.get("fiber_g", 0)
+            "energy_kcal": float(nutrition.get("energy_kcal") or 0),
+            "sugar_g": float(nutrition.get("sugar_g") or 0),
+            "fat_g": float(nutrition.get("fat_g") or 0),
+            "saturated_fat_g": float(nutrition.get("saturated_fat_g") or 0),
+            "trans_fat_g": float(nutrition.get("trans_fat_g") or 0),
+            "sodium_mg": float(nutrition.get("sodium_mg") or 0),
+            "protein_g": float(nutrition.get("protein_g") or 0),
+            "fiber_g": float(nutrition.get("fiber_g") or 0)
         },
         "clean_label": ingredients_clean,
         "palm_oil_detected": has_palm_oil,
@@ -121,7 +121,10 @@ def analyze_health(ocr_data: dict) -> dict:
 
 
 def _check_sugar(nutrition: dict, sugar_rank: int) -> dict:
-    sugar = nutrition.get("sugar_g", 0)
+    try:
+        sugar = float(nutrition.get("sugar_g") or 0)
+    except (ValueError, TypeError):
+        sugar = 0.0
 
     if sugar_rank > 0 and sugar_rank <= 3:
         return {
@@ -129,7 +132,7 @@ def _check_sugar(nutrition: dict, sugar_rank: int) -> dict:
             "severity": "high",
             "icon": "sugar",
             "title": "High Sugar Content",
-            "message": f"Sugar ranks #{sugar_rank} in ingredient list ({sugar}g/100ml). WHO recommends limiting free sugars to <25g/day.",
+            "message": f"Sugar ranks #{sugar_rank} in ingredient list ({sugar}g/100g). WHO recommends limiting free sugars to <25g/day.",
             "sugar_g_per_100ml": sugar,
             "rank": sugar_rank
         }
@@ -139,7 +142,7 @@ def _check_sugar(nutrition: dict, sugar_rank: int) -> dict:
             "severity": "medium",
             "icon": "sugar",
             "title": "High Sugar Content",
-            "message": f"{sugar}g sugar per 100ml — exceeds WHO recommended daily limit.",
+            "message": f"{sugar}g sugar per 100g — exceeds WHO recommended daily limit.",
             "sugar_g_per_100ml": sugar,
             "rank": sugar_rank
         }
@@ -147,7 +150,11 @@ def _check_sugar(nutrition: dict, sugar_rank: int) -> dict:
 
 
 def _check_sodium(nutrition: dict) -> dict:
-    sodium = nutrition.get("sodium_mg", 0)
+    try:
+        sodium = float(nutrition.get("sodium_mg") or 0)
+    except (ValueError, TypeError):
+        sodium = 0.0
+
     if sodium > 800:
         return {
             "type": "excess_sodium",
@@ -161,7 +168,11 @@ def _check_sodium(nutrition: dict) -> dict:
 
 
 def _check_saturated_fat(nutrition: dict) -> dict:
-    sat_fat = nutrition.get("saturated_fat_g", 0)
+    try:
+        sat_fat = float(nutrition.get("saturated_fat_g") or 0)
+    except (ValueError, TypeError):
+        sat_fat = 0.0
+
     if sat_fat > 5:
         return {
             "type": "excess_saturated_fat",
@@ -175,7 +186,11 @@ def _check_saturated_fat(nutrition: dict) -> dict:
 
 
 def _check_trans_fat(nutrition: dict) -> dict:
-    trans = nutrition.get("trans_fat_g", 0)
+    try:
+        trans = float(nutrition.get("trans_fat_g") or 0)
+    except (ValueError, TypeError):
+        trans = 0.0
+
     if trans > 0:
         return {
             "type": "trans_fat",
@@ -209,47 +224,48 @@ def _check_restricted_additives(detected: list, restricted: list) -> list:
 
 
 def _find_ingredient_position(ingredients: list, keywords: list) -> int:
-    for i, ing in enumerate(ingredients):
+    for i, ing in enumerate(ingredients or []):
+        ing_str = str(ing or "").lower()
         for kw in keywords:
-            if kw.lower() in ing.lower():
+            if kw.lower() in ing_str:
                 return i + 1
     return 0
 
 
 def _get_alternatives(ocr_data: dict, alts_db: dict) -> list:
-    product_name = ocr_data.get("product_name", "").lower()
-    has_palm = ocr_data.get("contains_palm_oil", False)
-    sugar_rank = ocr_data.get("sugar_rank_in_ingredients", 0)
+    product_name = str(ocr_data.get("product_name") or "").lower()
+    has_palm = bool(ocr_data.get("contains_palm_oil", False))
+    sugar_rank = int(ocr_data.get("sugar_rank_in_ingredients") or 0)
 
     alternatives = []
 
     if has_palm:
-        for group in alts_db.get("palm_oil_alternatives", []):
+        for group in alts_db.get("palm_oil_alternatives") or []:
             if _name_match(product_name, group.get("original_product", "")):
-                alternatives = group.get("alternatives", [])
+                alternatives = group.get("alternatives") or []
                 break
 
     if not alternatives and sugar_rank > 0 and sugar_rank <= 3:
-        for group in alts_db.get("sugar_alternatives", []):
+        for group in alts_db.get("sugar_alternatives") or []:
             if _name_match(product_name, group.get("original_product", "")):
-                alternatives = group.get("alternatives", [])
+                alternatives = group.get("alternatives") or []
                 break
 
     if not alternatives:
-        for group in alts_db.get("palm_oil_alternatives", []):
-            original_ings = [i.lower() for i in group.get("original_ingredients", [])]
-            current_ings = [i.lower() for i in ocr_data.get("ingredients", [])]
+        for group in alts_db.get("palm_oil_alternatives") or []:
+            original_ings = [str(i or "").lower() for i in group.get("original_ingredients") or []]
+            current_ings = [str(i or "").lower() for i in ocr_data.get("ingredients") or []]
             overlap = sum(1 for o in original_ings if any(o in c for c in current_ings))
             if overlap >= 2:
-                alternatives = group.get("alternatives", [])
+                alternatives = group.get("alternatives") or []
                 break
 
     return alternatives[:3]
 
 
 def _name_match(product: str, target: str) -> bool:
-    product_words = set(product.lower().split())
-    target_words = set(target.lower().split())
+    product_words = set(str(product or "").lower().split())
+    target_words = set(str(target or "").lower().split())
     overlap = product_words & target_words
     return len(overlap) >= 2
 
@@ -259,10 +275,11 @@ def _is_ingredients_clean(ingredients, additives, has_palm, sugar_rank) -> bool:
         return False
     if sugar_rank > 0 and sugar_rank <= 2:
         return False
-    if len(additives) > 3:
+    if len(additives or []) > 3:
         return False
-    for ing in ingredients:
-        if any(kw in ing.lower() for kw in ["maltodextrin", "msg", "hydrolysed", "artificial"]):
+    for ing in ingredients or []:
+        ing_str = str(ing or "").lower()
+        if any(kw in ing_str for kw in ["maltodextrin", "msg", "hydrolysed", "artificial"]):
             return False
     return True
 

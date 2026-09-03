@@ -22,19 +22,10 @@ async def scan_product(request: ScanRequest):
         preset=request.preset
     )
 
-    scale_data = None
-    compliance = None
-    health = None
-    alternatives = None
-
-    if request.role == Role.INSPECTOR:
-        scale_data = analyze_scale(ocr_data)
-        compliance = check_compliance(ocr_data, scale_data)
-
-    if request.role == Role.CITIZEN:
-        health_result = analyze_health(ocr_data)
-        health = health_result
-        alternatives = health_result.get("alternatives", [])
+    scale_data = analyze_scale(ocr_data)
+    compliance = check_compliance(ocr_data, scale_data)
+    health = analyze_health(ocr_data)
+    alternatives = health.get("alternatives", [])
 
     history_entry = {
         "scan_id": scan_id,

@@ -1,20 +1,72 @@
 import React, { useRef, useState, useCallback } from 'react';
 import { Camera, Upload, X, Loader2, ScanLine, CheckCircle2, AlertTriangle } from 'lucide-react';
 
+function compressAndProcessImage(file, maxDimension = 1600, quality = 0.85) {
+  return new Promise((resolve, reject) => {
+    if (!file || !file.type.startsWith('image/')) {
+      return reject(new Error('Invalid image file'));
+    }
+    const reader = new FileReader();
+    reader.onerror = () => reject(new Error('Failed to read image file'));
+    reader.onload = (e) => {
+      const img = new Image();
+      img.onerror = () => reject(new Error('Failed to parse image'));
+      img.onload = () => {
+        let width = img.width;
+        let height = img.height;
+
+        if (width > maxDimension || height > maxDimension) {
+          if (width > height) {
+            height = Math.round((height * maxDimension) / width);
+            width = maxDimension;
+          } else {
+            width = Math.round((width * maxDimension) / height);
+            height = maxDimension;
+          }
+        }
+
+        const canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) {
+          const rawBase64 = e.target.result.split(',')[1];
+          return resolve({ previewUrl: e.target.result, base64: rawBase64 });
+        }
+
+        ctx.drawImage(img, 0, 0, width, height);
+        const compressedDataUrl = canvas.toDataURL('image/jpeg', quality);
+        const base64 = compressedDataUrl.split(',')[1];
+        resolve({ previewUrl: compressedDataUrl, base64 });
+      };
+      img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
 export default function ScannerViewport({ onScan, presets, activePreset, onPresetSelect, scanning, scanData }) {
   const fileInputRef = useRef(null);
   const [preview, setPreview] = useState(null);
   const [dragOver, setDragOver] = useState(false);
 
-  const handleFile = useCallback((file) => {
+  const handleFile = useCallback(async (file) => {
     if (!file) return;
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const base64 = e.target.result.split(',')[1];
-      setPreview(e.target.result);
+    try {
+      const { previewUrl, base64 } = await compressAndProcessImage(file);
+      setPreview(previewUrl);
       onScan({ imageBase64: base64, preset: null });
-    };
-    reader.readAsDataURL(file);
+    } catch (err) {
+      console.error('Image compression error:', err);
+      // Fallback to basic read
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const base64 = e.target.result.split(',')[1];
+        setPreview(e.target.result);
+        onScan({ imageBase64: base64, preset: null });
+      };
+      reader.readAsDataURL(file);
+    }
   }, [onScan]);
 
   const handleDrop = useCallback((e) => {
@@ -95,7 +147,9 @@ export default function ScannerViewport({ onScan, presets, activePreset, onPrese
                 {scanData.compliance?.violations_count > 0 && (
                   <div className="self-end bg-crimson/95 backdrop-blur-xs text-white px-3 py-1.5 rounded-xl text-xs font-mono font-bold shadow-md flex items-center gap-1.5 border border-white/20 animate-pulse">
                     <AlertTriangle size={14} />
-                    <span>FLAGGED: {scanData.compliance.violations[0]?.clause || "Rule 6(1)(c) Non-Standard Unit"}</span>
+                    <span>
+                      FLAGGED: {scanData.compliance.violations?.[0]?.clause || scanData.compliance.violations?.[0]?.rule || "Rule 6(1)(c) Non-Standard Unit"}
+                    </span>
                   </div>
                 )}
               </div>
@@ -134,7 +188,11 @@ export default function ScannerViewport({ onScan, presets, activePreset, onPrese
           accept="image/*"
           capture="environment"
           className="hidden"
-          onChange={(e) => handleFile(e.target.files?.[0])}
+          onChange={(e) => {
+            const file = e.target.files?.[0];
+            e.target.value = '';
+            if (file) handleFile(file);
+          }}
         />
       </div>
 

@@ -43,7 +43,7 @@ export default function ScaleHUD({ scaleData }) {
           </div>
           <div className="bg-oatmeal rounded-xl p-3">
             <p className="text-[10px] text-slate font-medium uppercase tracking-wider">Pixels Per MM</p>
-            <p className="text-lg font-bold font-mono text-terracotta mt-0.5">{ppm.toFixed(2)}</p>
+            <p className="text-lg font-bold font-mono text-terracotta mt-0.5">{Number(ppm || 0).toFixed(2)}</p>
           </div>
           <div className="bg-oatmeal rounded-xl p-3">
             <p className="text-[10px] text-slate font-medium uppercase tracking-wider">Calibration</p>
@@ -51,7 +51,7 @@ export default function ScaleHUD({ scaleData }) {
               calibration_quality === 'good' ? 'text-forest' :
               calibration_quality === 'moderate' ? 'text-amber' : 'text-crimson'
             }`}>
-              {calibration_quality?.toUpperCase()}
+              {calibration_quality ? String(calibration_quality).toUpperCase() : 'STANDARD'}
             </p>
           </div>
         </div>
