@@ -26,9 +26,19 @@ app.include_router(truthin.router)
 
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
+from .services.supabase_service import get_supabase_status
 
-@app.get("/")
-async def root():
+@app.get("/health")
+async def health_check():
+    return {
+        "status": "healthy",
+        "gemini_configured": bool(settings.GEMINI_API_KEY),
+        "supabase": get_supabase_status()
+    }
+
+
+@app.get("/api")
+async def api_root():
     return {
         "app": settings.APP_NAME,
         "version": settings.APP_VERSION,
@@ -43,12 +53,12 @@ async def root():
     }
 
 
-from .services.supabase_service import get_supabase_status
-
-@app.get("/health")
-async def health_check():
-    return {
-        "status": "healthy",
-        "gemini_configured": bool(settings.GEMINI_API_KEY),
-        "supabase": get_supabase_status()
-    }
+# Mount unified frontend production build if available
+from pathlib import Path
+frontend_dist = Path(__file__).resolve().parent.parent.parent / "frontend" / "dist"
+if frontend_dist.exists():
+    app.mount("/", StaticFiles(directory=str(frontend_dist), html=True), name="ui")
+else:
+    @app.get("/")
+    async def root():
+        return await api_root()
