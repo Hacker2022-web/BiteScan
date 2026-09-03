@@ -62,20 +62,34 @@ export default function IntroModal({ isOpen, onClose, onSelectRole }) {
       {/* PHASE 1: TRUE EDGE-TO-EDGE FULLSCREEN APP STARTING VIDEO  */}
       {/* ========================================================= */}
       {phase === 'video' && (
-        <div className="relative w-full h-full flex items-center justify-center bg-black animate-fade">
+        <div className="relative w-full h-full flex items-center justify-center bg-black overflow-hidden animate-fade">
           
-          {/* Fullscreen Video Element */}
-          <video
-            ref={videoRef}
-            src="/intro.mp4"
-            className="w-full h-full object-cover sm:object-contain bg-black cursor-pointer"
-            playsInline
-            autoPlay
-            muted={isMuted}
-            onTimeUpdate={handleTimeUpdate}
-            onEnded={handleVideoEnded}
-            onClick={toggleMute}
-          />
+          {/* Ambient Blurred Background for Vertical Phone Screens */}
+          <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-30 select-none">
+            <video
+              src="/intro.mp4"
+              className="w-full h-full object-cover blur-3xl scale-125"
+              playsInline
+              autoPlay
+              muted
+              loop
+            />
+          </div>
+
+          {/* Fullscreen Video Element — Pure Uncropped 16:9 Aspect Ratio */}
+          <div className="relative z-10 w-full h-full flex items-center justify-center p-0">
+            <video
+              ref={videoRef}
+              src="/intro.mp4"
+              className="w-full h-full max-h-screen object-contain cursor-pointer drop-shadow-2xl"
+              playsInline
+              autoPlay
+              muted={isMuted}
+              onTimeUpdate={handleTimeUpdate}
+              onEnded={handleVideoEnded}
+              onClick={toggleMute}
+            />
+          </div>
 
           {/* Top Floating Controls */}
           <div className="absolute top-0 inset-x-0 z-30 flex items-center justify-between p-4 sm:p-7 bg-gradient-to-b from-black/80 via-black/40 to-transparent">
