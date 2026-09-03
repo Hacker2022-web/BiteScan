@@ -19,63 +19,129 @@ async def analyze_image_with_gemini(image_base64: str = None, preset: str = None
 async def _call_gemini_api(image_base64: str) -> dict:
     try:
         import httpx
-        # Clean data URL prefix if included
+
+        # Determine MIME type and clean base64 data
+        mime_type = "image/jpeg"
         cleaned_b64 = image_base64
-        if "base64," in cleaned_b64:
-            cleaned_b64 = cleaned_b64.split("base64,")[1]
+        if "data:" in cleaned_b64 and ";base64," in cleaned_b64:
+            header, cleaned_b64 = cleaned_b64.split(";base64,")
+            if "png" in header:
+                mime_type = "image/png"
+            elif "webp" in header:
+                mime_type = "image/webp"
+            elif "jpeg" in header or "jpg" in header:
+                mime_type = "image/jpeg"
 
-        async with httpx.AsyncClient(timeout=30.0) as client:
-            prompt = """You are an expert Legal Metrology Inspector and FSSAI Food Safety Analyst.
-            Analyze this product packaging image. Extract all details into strict JSON with:
-            {
-                "product_name": "Commercial name",
-                "brand": "Brand or Manufacturer name",
-                "net_quantity": "Net quantity with unit e.g. 70 g",
-                "mrp": "MRP numeric with currency e.g. ₹14.00",
-                "mrp_declaration": "Full MRP string e.g. MRP Rs 14.00 (inclusive of all taxes)",
-                "date_of_packing": "MM/YYYY or DD/MM/YYYY",
-                "best_before": "Expiry or best before statement",
-                "country_of_origin": "Country of origin",
-                "manufacturer": "Full manufacturer name and address",
-                "customer_care": "Customer grievance email or phone",
-                "ingredients": ["Ingredient 1", "Ingredient 2", ...],
-                "additives": ["E621", "E150d", ...],
-                "nutrition_per_100g": {
-                    "energy_kcal": 400.0, "sugar_g": 4.2, "fat_g": 15.0,
-                    "saturated_fat_g": 6.8, "trans_fat_g": 0.0, "sodium_mg": 1100.0,
-                    "protein_g": 8.0, "carbohydrate_g": 60.0, "fiber_g": 2.0
-                },
-                "sugar_rank_in_ingredients": 4,
-                "contains_palm_oil": true,
-                "detected_barcodes": [{"type": "EAN-13", "value": "8901058002479", "x": 100, "y": 200, "w": 300, "h": 120}],
-                "detected_text_regions": [{"text": "70 gms", "x": 120, "y": 400, "w": 80, "h": 30, "category": "net_qty"}]
-            }"""
+        prompt = """You are an official Legal Metrology Inspector and FSSAI Food Safety Analyst for the Government of India.
+Examine this product packaging image with forensic accuracy under the Legal Metrology (Packaged Commodities) Rules, 2011 and FSSAI Packaging & Labelling Regulations.
 
-            response = await client.post(
-                f"https://generativelanguage.googleapis.com/v1beta/models/{settings.GEMINI_MODEL}:generateContent?key={settings.GEMINI_API_KEY}",
-                json={
-                    "contents": [{
-                        "parts": [
-                            {"text": prompt},
-                            {"inline_data": {"mime_type": "image/jpeg", "data": cleaned_b64}}
-                        ]
-                    }],
-                    "generationConfig": {"responseMimeType": "application/json"}
-                }
-            )
-            if response.status_code == 200:
-                data = response.json()
-                text = data["candidates"][0]["content"]["parts"][0]["text"].strip()
-                if text.startswith("```json"):
-                    text = text[7:]
-                if text.endswith("```"):
-                    text = text[:-3]
-                text = text.strip()
-                return json.loads(text)
-            else:
-                print(f"[Gemini Vision Error] Status {response.status_code}: {response.text}")
+Extract every statutory label detail and return a strictly valid JSON object adhering to this schema:
+{
+    "product_name": "Commercial brand/product name as printed",
+    "brand": "Brand or Manufacturer name",
+    "generic_name": "Generic or common name of commodity (e.g., Potato Chips, Instant Noodles, Edible Oil)",
+    "net_quantity": "Exact net quantity string with unit e.g. 70 g or 150 gms",
+    "quantity_value": 70.0,
+    "quantity_unit": "g",
+    "mrp": "MRP numeric with currency e.g. ₹14.00",
+    "mrp_declaration": "Full exact MRP statement as printed e.g. MRP Rs. 14.00 (incl. of all taxes)",
+    "has_tax_statement": true,
+    "unit_sale_price": "Unit Sale Price e.g. ₹0.20 / g if declared, otherwise null",
+    "date_of_packing": "Date/Month of packing or manufacture e.g. MM/YYYY",
+    "best_before": "Expiry or best before statement e.g. Best before 9 months from manufacture",
+    "country_of_origin": "Declared Country of Origin e.g. India",
+    "manufacturer": "Full manufacturer/packer/importer name and address including 6-digit PIN code",
+    "manufacturer_pincode": "6-digit PIN code if present",
+    "customer_care": "Full customer care/consumer grievance details",
+    "customer_care_email": "Customer care email ID if present",
+    "customer_care_phone": "Customer care helpline/telephone number if present",
+    "ingredients": ["Ingredient 1", "Ingredient 2"],
+    "additives": ["E-number or chemical additive names e.g. INS 621, INS 150d"],
+    "nutrition_per_100g": {
+        "energy_kcal": 400.0,
+        "sugar_g": 4.2,
+        "fat_g": 15.0,
+        "saturated_fat_g": 6.8,
+        "trans_fat_g": 0.0,
+        "sodium_mg": 1100.0,
+        "protein_g": 8.0,
+        "carbohydrate_g": 60.0,
+        "fiber_g": 2.0
+    },
+    "sugar_rank_in_ingredients": 4,
+    "contains_palm_oil": false,
+    "detected_barcodes": [
+        {"type": "EAN-13", "value": "8901058002479", "x": 100, "y": 200, "w": 300, "h": 120}
+    ],
+    "detected_text_regions": [
+        {"text": "70 g", "x": 120, "y": 400, "w": 80, "h": 30, "category": "net_qty"},
+        {"text": "MRP Rs. 14.00 (incl. of all taxes)", "x": 120, "y": 450, "w": 250, "h": 25, "category": "mrp"}
+    ],
+    "font_analysis": {
+        "net_quantity_numeral_height_mm": 3.5,
+        "principal_display_panel_area_sq_cm": 150.0,
+        "is_sub_minimum": false
+    }
+}
+
+IMPORTANT:
+- If a declaration (like customer care email or inclusive of all taxes) is missing on the package, set it to null or false.
+- Read exact units: note if the package erroneously prints 'gms' instead of standard 'g', or 'ltrs' instead of 'l'.
+- Output ONLY the raw JSON object. Do not include markdown explanation."""
+
+        candidate_models = [
+            settings.GEMINI_MODEL,
+            "gemini-3.6-flash",
+            "gemini-3.7-flash",
+            "gemini-3.8-flash",
+            "gemini-flash-latest"
+        ]
+        # Deduplicate while preserving order
+        candidate_models = list(dict.fromkeys(m for m in candidate_models if m))
+
+        async with httpx.AsyncClient(timeout=45.0) as client:
+            for model_name in candidate_models:
+                try:
+                    url = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent?key={settings.GEMINI_API_KEY}"
+                    payload = {
+                        "contents": [{
+                            "parts": [
+                                {"text": prompt},
+                                {"inline_data": {"mime_type": mime_type, "data": cleaned_b64}}
+                            ]
+                        }],
+                        "generationConfig": {"responseMimeType": "application/json"}
+                    }
+                    response = await client.post(url, json=payload)
+                    if response.status_code == 200:
+                        data = response.json()
+                        candidates = data.get("candidates", [])
+                        if candidates and "content" in candidates[0]:
+                            parts = candidates[0]["content"].get("parts", [])
+                            # Find text part (ignoring thought parts if any)
+                            text = ""
+                            for p in parts:
+                                if "text" in p and not p.get("thought", False):
+                                    text += p["text"]
+                            text = text.strip()
+                            if text.startswith("```json"):
+                                text = text[7:]
+                            elif text.startswith("```"):
+                                text = text[3:]
+                            if text.endswith("```"):
+                                text = text[:-3]
+                            text = text.strip()
+                            parsed = json.loads(text)
+                            print(f"[Gemini Vision Success] Analyzed packaging using {model_name}: {parsed.get('product_name')}")
+                            return parsed
+                    else:
+                        print(f"[Gemini Vision {model_name} Error {response.status_code}]: {response.text[:200]}")
+                except Exception as model_err:
+                    print(f"[Gemini Vision Model {model_name} Failed]: {model_err}")
+                    continue
+
     except Exception as e:
-        print(f"[Gemini Vision Exception] {e}")
+        print(f"[Gemini Vision Overall Exception] {e}")
 
     return _mock_ocr_from_image(image_base64)
 

@@ -49,6 +49,21 @@ def check_compliance(ocr_data: dict, scale_data: dict = None) -> dict:
     if not qty_check["passed"]:
         violations.append(qty_check)
 
+    mfg_check = _check_manufacturer(ocr_data)
+    checks.append(mfg_check)
+    if not mfg_check["passed"]:
+        violations.append(mfg_check)
+
+    care_check = _check_consumer_care(ocr_data)
+    checks.append(care_check)
+    if not care_check["passed"]:
+        violations.append(care_check)
+
+    usp_check = _check_unit_sale_price(ocr_data)
+    checks.append(usp_check)
+    if not usp_check["passed"]:
+        violations.append(usp_check)
+
     total_checks = len(checks)
     passed_checks = sum(1 for c in checks if c["passed"])
 
@@ -234,3 +249,84 @@ def _parse_net_quantity_to_grams(qty_str: str) -> float:
     elif unit == "ml":
         return value
     return value
+
+
+def _check_manufacturer(ocr_data: dict) -> dict:
+    mfg = ocr_data.get("manufacturer", "")
+    pincode = ocr_data.get("manufacturer_pincode") or ""
+
+    if not pincode and mfg:
+        pin_match = re.search(r"\b[1-9][0-9]{5}\b", mfg)
+        if pin_match:
+            pincode = pin_match.group(0)
+
+    has_mfg = bool(mfg) and len(mfg.strip()) > 5
+    has_valid_address = has_mfg and bool(pincode)
+
+    return {
+        "rule": "Rule 6(1)(a)",
+        "description": "Name and complete address of manufacturer/packer with PIN code",
+        "passed": has_valid_address,
+        "severity": "high" if not has_mfg else "medium",
+        "found": mfg if mfg else "Manufacturer details not found",
+        "pincode_found": pincode if pincode else "PIN code missing",
+        "expected": "Complete physical address including 6-digit postal PIN code",
+        "remedy": "Declare full postal address of manufacturer including valid 6-digit PIN code"
+    }
+
+
+def _check_consumer_care(ocr_data: dict) -> dict:
+    cc_text = ocr_data.get("customer_care", "") or ""
+    email = ocr_data.get("customer_care_email") or ""
+    phone = ocr_data.get("customer_care_phone") or ""
+
+    if not email and cc_text:
+        email_match = re.search(r"[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+", cc_text)
+        if email_match:
+            email = email_match.group(0)
+
+    if not phone and cc_text:
+        phone_match = re.search(r"(\+91[\-\s]?)?[0]?(91)?[6-9]\d{9}|1800[\-\s]?\d{3}[\-\s]?\d{3,4}", cc_text)
+        if phone_match:
+            phone = phone_match.group(0)
+
+    has_email = bool(email)
+    has_phone = bool(phone)
+    passed = has_email and has_phone
+
+    return {
+        "rule": "Rule 6(1)(g)",
+        "description": "Consumer care details must include both telephone number and email address",
+        "passed": passed,
+        "severity": "high" if not (has_email or has_phone) else "medium",
+        "found": f"Email: {email or 'MISSING'} | Phone: {phone or 'MISSING'}",
+        "email": email,
+        "phone": phone,
+        "expected": "Contact executive name, phone number, and valid email address",
+        "remedy": "Include both valid customer care email address and telephone helpline"
+    }
+
+
+def _check_unit_sale_price(ocr_data: dict) -> dict:
+    net_qty_str = ocr_data.get("net_quantity", "0")
+    net_qty_g = _parse_net_quantity_to_grams(net_qty_str)
+    usp = ocr_data.get("unit_sale_price")
+
+    mandatory = net_qty_g > 100.0
+    passed = True
+    found_desc = usp or "Not declared"
+
+    if mandatory:
+        passed = bool(usp) and usp.strip().lower() not in ["null", "none", "not declared", ""]
+        if not passed:
+            found_desc = f"Net Qty {net_qty_str} (>100g) but USP is missing"
+
+    return {
+        "rule": "Rule 6(11) [2021 Amendment]",
+        "description": "Unit Sale Price (USP) per g/ml mandatory for commodities > 100g or 100ml",
+        "passed": passed,
+        "severity": "medium",
+        "found": found_desc,
+        "expected": "e.g., '₹ 0.20 / g' or '₹ 20.00 / 100 g'",
+        "remedy": "Declare Unit Sale Price rounded off to nearest paise per g or ml"
+    }

@@ -61,6 +61,53 @@ CREATE TABLE IF NOT EXISTS public.crawler_products (
 CREATE INDEX IF NOT EXISTS idx_crawler_compliant ON public.crawler_products (is_compliant);
 CREATE INDEX IF NOT EXISTS idx_crawler_barcode ON public.crawler_products (barcode);
 
+-- 4. SCAN_SESSIONS TABLE (Used by frontend Supabase client for inspector telemetry)
+CREATE TABLE IF NOT EXISTS public.scan_sessions (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    session_code TEXT NOT NULL UNIQUE,
+    role TEXT DEFAULT 'inspector',
+    product_name TEXT,
+    brand TEXT,
+    barcode TEXT,
+    image_url TEXT,
+    is_lm_compliant BOOLEAN DEFAULT TRUE,
+    lm_compliance_score NUMERIC(5, 2) DEFAULT 100.0,
+    health_score NUMERIC(3, 1) DEFAULT 10.0,
+    health_status TEXT,
+    measured_font_height_mm NUMERIC(4, 2),
+    required_min_font_height_mm NUMERIC(4, 2),
+    ppm_scale NUMERIC(5, 2),
+    inspector_name TEXT,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_scan_sessions_created ON public.scan_sessions (created_at DESC);
+
+-- 5. VIOLATIONS TABLE (Specific rule violations attached to scan sessions)
+CREATE TABLE IF NOT EXISTS public.violations (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    scan_id UUID REFERENCES public.scan_sessions(id) ON DELETE CASCADE,
+    rule_clause TEXT,
+    category TEXT DEFAULT 'LEGAL_METROLOGY',
+    title TEXT,
+    description TEXT,
+    severity TEXT DEFAULT 'HIGH',
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+-- 6. HEALTHY_ALTERNATIVES TABLE
+CREATE TABLE IF NOT EXISTS public.healthy_alternatives (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    name TEXT NOT NULL,
+    brand TEXT,
+    health_score NUMERIC(3, 1),
+    price TEXT,
+    target_category TEXT,
+    image_url TEXT,
+    benefits JSONB,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
 -- =========================================================================
 -- ROW LEVEL SECURITY (RLS) POLICIES
 -- =========================================================================
@@ -69,40 +116,22 @@ CREATE INDEX IF NOT EXISTS idx_crawler_barcode ON public.crawler_products (barco
 ALTER TABLE public.scans ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.notices ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.crawler_products ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.scan_sessions ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.violations ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.healthy_alternatives ENABLE ROW LEVEL SECURITY;
 
 -- Allow public read and insert for demo/app use
-CREATE POLICY "Allow public select on scans"
-    ON public.scans FOR SELECT
-    TO anon, authenticated
-    USING (true);
-
-CREATE POLICY "Allow public insert on scans"
-    ON public.scans FOR INSERT
-    TO anon, authenticated
-    WITH CHECK (true);
-
-CREATE POLICY "Allow public select on notices"
-    ON public.notices FOR SELECT
-    TO anon, authenticated
-    USING (true);
-
-CREATE POLICY "Allow public insert on notices"
-    ON public.notices FOR INSERT
-    TO anon, authenticated
-    WITH CHECK (true);
-
-CREATE POLICY "Allow public select on crawler_products"
-    ON public.crawler_products FOR SELECT
-    TO anon, authenticated
-    USING (true);
-
-CREATE POLICY "Allow public all on crawler_products"
-    ON public.crawler_products FOR ALL
-    TO anon, authenticated
-    USING (true)
-    WITH CHECK (true);
+CREATE POLICY "Allow public all on scans" ON public.scans FOR ALL TO anon, authenticated USING (true) WITH CHECK (true);
+CREATE POLICY "Allow public all on notices" ON public.notices FOR ALL TO anon, authenticated USING (true) WITH CHECK (true);
+CREATE POLICY "Allow public all on crawler_products" ON public.crawler_products FOR ALL TO anon, authenticated USING (true) WITH CHECK (true);
+CREATE POLICY "Allow public all on scan_sessions" ON public.scan_sessions FOR ALL TO anon, authenticated USING (true) WITH CHECK (true);
+CREATE POLICY "Allow public all on violations" ON public.violations FOR ALL TO anon, authenticated USING (true) WITH CHECK (true);
+CREATE POLICY "Allow public all on healthy_alternatives" ON public.healthy_alternatives FOR ALL TO anon, authenticated USING (true) WITH CHECK (true);
 
 -- Grant access to anon and authenticated roles
 GRANT ALL ON TABLE public.scans TO anon, authenticated;
 GRANT ALL ON TABLE public.notices TO anon, authenticated;
 GRANT ALL ON TABLE public.crawler_products TO anon, authenticated;
+GRANT ALL ON TABLE public.scan_sessions TO anon, authenticated;
+GRANT ALL ON TABLE public.violations TO anon, authenticated;
+GRANT ALL ON TABLE public.healthy_alternatives TO anon, authenticated;
