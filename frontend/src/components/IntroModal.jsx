@@ -81,10 +81,12 @@ export default function IntroModal({ isOpen, onClose, onSelectRole }) {
           <div className="absolute top-0 inset-x-0 z-30 flex items-center justify-between p-4 sm:p-7 bg-gradient-to-b from-black/80 via-black/40 to-transparent">
             
             {/* Minimal Brand Watermark */}
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-2xl bg-white/10 backdrop-blur-xl border border-white/20 flex items-center justify-center shadow-lg">
-                <span className="text-forest font-serif italic font-extrabold text-2xl">B</span>
-              </div>
+            <div className="flex items-center gap-2.5">
+              <img
+                src="/logo.png"
+                alt="BiteScan Official Logo"
+                className="w-10 h-10 object-contain rounded-full drop-shadow-md hover:scale-105 transition-transform"
+              />
               <div>
                 <div className="flex items-center gap-1 leading-none">
                   <span className="text-white font-serif italic font-extrabold text-xl tracking-tight">Bite</span>
@@ -144,7 +146,12 @@ export default function IntroModal({ isOpen, onClose, onSelectRole }) {
             
             {/* National Crest & Heading */}
             <div className="text-center mb-6 sm:mb-8">
-              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-forest-soft border border-forest/20 text-[10px] font-mono text-forest font-bold uppercase tracking-wider mb-3">
+              <img
+                src="/logo.png"
+                alt="BiteScan Official Logo"
+                className="w-20 h-20 object-contain rounded-full mx-auto mb-3 drop-shadow-md hover:scale-105 transition-transform"
+              />
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-forest-soft border border-forest/20 text-[10px] font-mono text-forest font-bold uppercase tracking-wider mb-2">
                 <Sparkles size={12} />
                 <span>Department of Consumer Affairs • Smart India Hackathon</span>
               </div>

@@ -17,10 +17,12 @@ export default function Navbar({ role, onRoleChange, onReplayIntro }) {
         <div className="flex items-center justify-between h-16">
           
           {/* Logo & Tagline */}
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-oatmeal border border-oatmeal-dark rounded-xl flex items-center justify-center shadow-inner">
-              <span className="text-forest font-bold text-xl font-serif italic">B</span>
-            </div>
+          <div className="flex items-center gap-2.5">
+            <img
+              src="/logo.png"
+              alt="BiteScan Official Logo"
+              className="w-10 h-10 object-contain rounded-full drop-shadow-sm hover:scale-105 transition-transform"
+            />
             <div>
               <div className="flex items-center gap-1 leading-none">
                 <span className="text-forest font-serif italic font-extrabold text-xl tracking-tight">Bite</span>

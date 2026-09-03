@@ -8,9 +8,11 @@ export default function RoleSelector({ onSelect }) {
         
         {/* Logo & Header */}
         <div className="text-center mb-10">
-          <div className="w-18 h-18 bg-white border border-oatmeal-dark rounded-3xl flex items-center justify-center mx-auto mb-4 shadow-sm shadow-terracotta/10 group">
-            <span className="text-forest font-serif italic font-extrabold text-3xl">B</span>
-          </div>
+          <img
+            src="/logo.png"
+            alt="BiteScan Official Logo"
+            className="w-24 h-24 object-contain rounded-full mx-auto mb-4 drop-shadow-md hover:scale-105 transition-transform"
+          />
           
           <div className="flex items-center justify-center gap-1.5 leading-none">
             <span className="text-forest font-serif italic font-extrabold text-3xl sm:text-4xl tracking-tight">Bite</span>
