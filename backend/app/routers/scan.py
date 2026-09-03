@@ -13,6 +13,7 @@ router = APIRouter(prefix="/api/v1/scan", tags=["scan"])
 
 
 @router.post("")
+@router.post("/")
 async def scan_product(request: ScanRequest):
     scan_id = f"SCAN-{uuid.uuid4().hex[:12].upper()}"
     timestamp = datetime.now().isoformat()
