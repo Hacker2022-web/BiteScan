@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Shield, Leaf, Menu, X, Activity } from 'lucide-react';
+import { Shield, Leaf, Menu, X, Activity, Film } from 'lucide-react';
 
-export default function Navbar({ role, onRoleChange }) {
+export default function Navbar({ role, onRoleChange, onReplayIntro }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [backendOnline, setBackendOnline] = useState(true);
 
@@ -34,6 +34,17 @@ export default function Navbar({ role, onRoleChange }) {
 
           {/* Center/Right: Live System Status & Role Switcher */}
           <div className="hidden md:flex items-center gap-3">
+            {onReplayIntro && (
+              <button
+                onClick={onReplayIntro}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-oatmeal hover:bg-oatmeal-dark border border-oatmeal-dark text-[11px] font-mono font-bold text-walnut transition-all cursor-pointer shadow-2xs hover:scale-105"
+                title="Watch App Starting Video & Portal Selector"
+              >
+                <Film size={13} className="text-terracotta" />
+                <span>Intro Video</span>
+              </button>
+            )}
+
             <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-oatmeal border border-oatmeal-dark text-[11px] font-mono text-slate">
               <span className={`w-2 h-2 rounded-full ${backendOnline ? 'bg-forest animate-pulse' : 'bg-amber'}`} />
               <span>{backendOnline ? 'ENGINE READY' : 'OFFLINE MODE'}</span>

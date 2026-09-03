@@ -16,11 +16,13 @@ import ComplianceCard from './components/ComplianceCard';
 import ScaleHUD from './components/ScaleHUD';
 import NoticeModal from './components/NoticeModal';
 import EcommerceAuditor from './components/EcommerceAuditor';
+import IntroModal from './components/IntroModal';
 import { scanProduct, getPresets } from './services/api';
 import { saveScanToSupabase } from './services/supabaseService';
 
 export default function App() {
-  const [role, setRole] = useState('citizen'); // Default to citizen for instant access
+  const [role, setRole] = useState('citizen');
+  const [showIntro, setShowIntro] = useState(true); // Startup video & portal pop-up
   const [citizenTab, setCitizenTab] = useState('home'); // 'home', 'search', 'categories', 'bot', 'scan'
   const [scanData, setScanData] = useState(null);
   const [presets, setPresets] = useState([]);
@@ -84,8 +86,19 @@ export default function App() {
   return (
     <div className="min-h-screen bg-oatmeal text-walnut font-sans flex flex-col selection:bg-terracotta selection:text-white">
       
+      {/* Starting Video & Login Portal Pop-up */}
+      <IntroModal
+        isOpen={showIntro}
+        onClose={() => setShowIntro(false)}
+        onSelectRole={handleRoleSelect}
+      />
+
       {/* Top Navbar */}
-      <Navbar role={role} onRoleChange={handleRoleChange} />
+      <Navbar
+        role={role}
+        onRoleChange={handleRoleChange}
+        onReplayIntro={() => setShowIntro(true)}
+      />
 
       {/* Main Responsive Body */}
       <main className="flex-1 max-w-4xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-5">
